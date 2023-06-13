@@ -1,5 +1,5 @@
 import 'package:flutter_api_bawaslu/models/post.dart';
-import 'package:flutter_api_bawaslu/services/remote_services_pemilu_perbawaslu.dart';
+import 'package:flutter_api_bawaslu/services/remote_services_pemilu_keputusan.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,8 +31,8 @@ class PDFViewerFromUrl extends StatelessWidget {
 }
 
 
-class PdfViewPemiluPerbawaslu extends StatefulWidget {
-  const PdfViewPemiluPerbawaslu({Key? key}) : super(key: key);
+class PdfViewPemiluKeputusan extends StatefulWidget {
+  const PdfViewPemiluKeputusan({Key? key}) : super(key: key);
 
   @override
   _PdfViewState createState() => _PdfViewState();
@@ -70,7 +70,7 @@ class PDFView extends StatelessWidget {
   }
 }
 
-class _PdfViewState extends State<PdfViewPemiluPerbawaslu> {
+class _PdfViewState extends State<PdfViewPemiluKeputusan> {
   List<Post>? posts;
   var isLoaded = false;
 
@@ -83,7 +83,7 @@ class _PdfViewState extends State<PdfViewPemiluPerbawaslu> {
   }
 
   getData() async {
-    posts = await RemoteServicePemiluPerbawaslu().getPosts();
+    posts = await RemoteServicePemiluKeputusan().getPosts();
     if (posts != null) {
       setState(() {
         isLoaded = true;

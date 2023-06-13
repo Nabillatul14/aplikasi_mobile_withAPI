@@ -13,7 +13,7 @@ class about extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String body =
-        '''Aplikasi E-Pasal ini dibuat untuk memudahkan para pengguna melihat pasal pemilu dan pemilihan. Aplikasi ini berisi pdf UU pemilu dan perbawaslu yang masih berlaku.
+        '''Aplikasi E-Pasal ini dibuat untuk memudahkan para pengguna dalam mengetahui peraturan perundang undangan tantang pemilu dan pemilihan yang masih berlaku.
         ''';
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),

@@ -64,7 +64,7 @@ class PDFView extends StatelessWidget {
           ),
         ],
       ),
-      body:SfPdfViewer.network("http://192.168.0.166:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf")
+      body:SfPdfViewer.network("http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf")
     );
 
   }
@@ -117,6 +117,11 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.grey[300],
+                    ),
+                    child: Icon(
+                      Icons.picture_as_pdf,
+                      color: Colors.red,
+                      size: 28,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -172,7 +177,7 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                         //  FlutterWebviewPlugin().launch(url);
                         Navigator.push(context, 
                         MaterialPageRoute(builder: (context) => PDFViewerFromUrl(
-                      url: 'http://192.168.0.166:8000/storage/${posts![index].data_file}'
+                      url: 'http://172.20.10.6:8000/storage/${posts![index].data_file}'
                     )),
                       );
                       },
@@ -182,10 +187,10 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.picture_as_pdf, // Tambahkan ikon PDF
-                            color: Colors.white,
-                          ),
+                          // Icon(
+                          //   Icons.picture_as_pdf, // Tambahkan ikon PDF
+                          //   color: Colors.white,
+                          // ),
                           SizedBox(width: 8), // Tambahkan jarak antara ikon dan teks
                           Text(
                             'Buka PDF',

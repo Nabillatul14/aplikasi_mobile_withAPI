@@ -5,7 +5,7 @@ class RemoteServicePemilihanPerbawaslu {
   Future<List<Post>?> getPosts() async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://192.168.0.166:8000/api/pemilihanPerbawaslu');
+    var uri = Uri.parse('http://172.20.10.6:8000/api/pemilihanPerbawaslu');
     var response = await client.get(uri);
     if (response.statusCode == 200) {
       var json = response.body;

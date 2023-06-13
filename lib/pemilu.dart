@@ -1,6 +1,7 @@
 // import 'package:flutter_api_bawaslu/pemilu/perbawaslu.dart';
 // import 'package:flutter_api_bawaslu/pemilu/uupemilu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_api_bawaslu/views/pdfviewpemilukeputusan.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemiluperbawaslu.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemiluuud.dart';
 
@@ -85,6 +86,34 @@ class pemilu extends StatelessWidget {
                       width: 30,
                     ),
                     label: Text('        PERBAWASLU        ', style: TextStyle(color: Colors.white)), // Mengatur warna teks tombol menjadi putih
+                  ),
+                ],
+              ),
+
+              //button 3
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    height: 30,
+                    width: 30,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PdfViewPemiluKeputusan()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFbc9d61), // Memberikan warna latar belakang pada tombol
+                    ),
+                    icon: Image.asset(
+                      'images/law.png',
+                      height: 30,
+                      width: 30,
+                    ),
+                    label: Text('  Keputusan BAWASLU  ', style: TextStyle(color: Colors.white)), // Mengatur warna teks tombol menjadi putih
                   ),
                 ],
               ),
