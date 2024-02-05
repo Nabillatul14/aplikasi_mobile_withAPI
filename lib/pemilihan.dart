@@ -13,7 +13,10 @@ class pemilihan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pemilihan'),
+        title: Text('Pemilihan',  
+        style: TextStyle(color: Colors.white, 
+        fontWeight: FontWeight.bold,
+        fontSize: 25)), 
         centerTitle: true,
         backgroundColor: Color(0xFFbc9d61), // warna AppBar
       ),
@@ -39,7 +42,7 @@ class pemilihan extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  height: 30,
+                  height: 50,
                   width: 30,
                 ),
                 ElevatedButton.icon(
@@ -57,7 +60,10 @@ class pemilihan extends StatelessWidget {
                     height: 30,
                     width: 30,
                   ),
-                  label: Text('Undang-Undang Pemilu'),
+                  label: Text('Undang-Undang Pemilihan', 
+                  style: TextStyle(color: Colors.white, 
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,)) // Mengatur warna teks tombol menjadi putih),
                 ),
               ],
             ),
@@ -67,7 +73,7 @@ class pemilihan extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    height: 30,
+                    height: 50,
                     width: 30,
                   ),
                   ElevatedButton.icon(
@@ -85,7 +91,10 @@ class pemilihan extends StatelessWidget {
                       height: 30,
                       width: 30,
                     ),
-                    label: Text('        PERBAWASLU        ', style: TextStyle(color: Colors.white)), // Mengatur warna teks tombol menjadi putih
+                    label: Text('           PERBAWASLU           ', 
+                    style: TextStyle(color: Colors.white, 
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,)) 
                   ),
                 ],
               ),
@@ -95,7 +104,7 @@ class pemilihan extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    height: 30,
+                    height: 50,
                     width: 30,
                   ),
                   ElevatedButton.icon(
@@ -113,7 +122,10 @@ class pemilihan extends StatelessWidget {
                       height: 30,
                       width: 30,
                     ),
-                    label: Text('  Keputusan BAWASLU  ', style: TextStyle(color: Colors.white)), // Mengatur warna teks tombol menjadi putih
+                    label: Text('     Keputusan BAWASLU    ', 
+                   style: TextStyle(color: Colors.white, 
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,)) 
                   ),
                 ],
               ),

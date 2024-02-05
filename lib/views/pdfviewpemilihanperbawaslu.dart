@@ -1,25 +1,69 @@
+import 'package:flutter_api_bawaslu/bookmark.dart';
 import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter_api_bawaslu/services/remote_services_pemilihan_perbawaslu.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 // import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 // import 'package:webview_flutter/webview_flutter.dart';
 
 class PDFViewerFromUrl extends StatelessWidget {
-  const PDFViewerFromUrl({Key? key, required this.url}) : super(key: key);
-
   final String url;
+  PDFViewerFromUrl({Key? key, required this.url}) : super(key: key);
+  late PdfViewerController _pdfViewerController;
+  final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PDF From Url'),
+        title: const Text('PDF From URL',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 25)),
         centerTitle: true,
-        backgroundColor: Color(0xFFbc9d61), // warna AppBar
+        backgroundColor: Color(0xFFbc9d61),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("SIMPAN"),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text("TERAKHIR DIBACA"),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFFbc9d61),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text("BOOKMARK"),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFFbc9d61),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
+        ],
       ),
       body: const PDF().fromUrl(
         url,
@@ -30,7 +74,6 @@ class PDFViewerFromUrl extends StatelessWidget {
   }
 }
 
-
 class PdfViewPemilihanPerbawaslu extends StatefulWidget {
   const PdfViewPemilihanPerbawaslu({Key? key}) : super(key: key);
 
@@ -39,34 +82,21 @@ class PdfViewPemilihanPerbawaslu extends StatefulWidget {
 }
 
 class PDFView extends StatelessWidget {
+   late PdfViewerController _pdfViewerController;
+  final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   // child: SfPdfViewer.network(
-    //   //     "http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf"),
-    //       child: SfPdfViewer.network(
-    //       "https://repository.bsi.ac.id/index.php/unduh/item/242521/cover-dan-isi-lengkap-web-pro.pdf"),
-    //   // child: Text("awjeokawoeaweko")
-    // );
     return Scaffold(
+      body: SfPdfViewer.network(
+        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        controller: _pdfViewerController,
+        key: _pdfViewerStateKey,
+      ),
       appBar: AppBar(
         title: const Text('Syncfusion Flutter PDF Viewer'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.bookmark,
-              color: Colors.white,
-              semanticLabel: 'Bookmark',
-            ),
-            onPressed: () {
-              // _pdfViewerKey.currentState?.openBookmarkView();
-            },
-          ),
-        ],
       ),
-      body:SfPdfViewer.network("http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf")
     );
-
   }
 }
 
@@ -95,7 +125,11 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Posts PDF'),
+        title: const Text('Posts PDF',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 25)),
         centerTitle: true,
         backgroundColor: Color(0xFFbc9d61), // warna AppBar
       ),
@@ -146,7 +180,7 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                   //   //   var url =
                   //   //       'http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf';
                   //   //  FlutterWebviewPlugin().launch(url);
-                  //     Navigator.push(context, 
+                  //     Navigator.push(context,
                   //       MaterialPageRoute(builder: (context) => const PDFViewerFromUrl(
                   //     url: 'http://192.168.1.8:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf'
                   //   )),
@@ -172,34 +206,37 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                   // ),
                   ElevatedButton(
                     onPressed: () {
-                        //   var url =
-                        //       'http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf';
-                        //  FlutterWebviewPlugin().launch(url);
-                        Navigator.push(context, 
-                        MaterialPageRoute(builder: (context) => PDFViewerFromUrl(
-                      url: 'http://172.20.10.6:8000/storage/${posts![index].data_file}'
-                    )),
+                      //   var url =
+                      //       'http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf';
+                      //  FlutterWebviewPlugin().launch(url);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PDFViewerFromUrl(
+                                url:
+                                    'http://172.20.10.6:8000/storage/${posts![index].data_file}')),
                       );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFbc9d61), // Ubah warna latar belakang tombol
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Icon(
-                          //   Icons.picture_as_pdf, // Tambahkan ikon PDF
-                          //   color: Colors.white,
-                          // ),
-                          SizedBox(width: 8), // Tambahkan jarak antara ikon dan teks
-                          Text(
-                            'Buka PDF',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary:
+                          Color(0xFFbc9d61), // Ubah warna latar belakang tombol
                     ),
-
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Icon(
+                        //   Icons.picture_as_pdf, // Tambahkan ikon PDF
+                        //   color: Colors.white,
+                        // ),
+                        SizedBox(
+                            width: 8), // Tambahkan jarak antara ikon dan teks
+                        Text(
+                          'Buka PDF',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );

@@ -17,7 +17,7 @@ class _halamanawalState extends State<halamanawal> {
   }
 
   halamanawalstart() async{
-    var duration = const Duration(seconds:4);
+    var duration = const Duration(seconds:3);
     return Timer(duration, (){
       Navigator.push(
         context,
@@ -41,14 +41,23 @@ class _halamanawalState extends State<halamanawal> {
             Container(
               height: 80,
             ),
+            //image logo bawaslu
+            Container(
+              child: Center(
+                child: Image.asset('images/LOGOBAWASLU.png'),
+              ),
+              height: 100,
+              width: 200,
+            ),
+            
             Container(
               child: Center(
                 child: Image.asset('images/epasalwhite.jpg'),  
               ),
             ),
             Container(
-              height: 120,
-              width: 180,
+              height: 100,
+              width: 100,
             ),
           ],
         ),
