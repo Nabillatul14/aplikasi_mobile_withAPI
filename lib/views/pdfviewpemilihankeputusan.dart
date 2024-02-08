@@ -1,8 +1,11 @@
 import 'package:flutter_api_bawaslu/bookmark.dart';
+import 'package:flutter_api_bawaslu/last_read.dart';
 import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter_api_bawaslu/services/remote_services_pemilihan_keputusan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanKeputusan.dart';
+import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -11,8 +14,49 @@ import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 class PDFViewerFromUrl extends StatelessWidget {
   final String url;
   PDFViewerFromUrl({Key? key, required this.url}) : super(key: key);
-  late PdfViewerController _pdfViewerController;
-  final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
+
+  List<Post>? posts;
+
+  BookmarkScreen database = BookmarkScreen.instance; // Menyesuaikan pemanggilan dengan metode getter instance
+
+  get index => null;
+
+  void addbookmark(bool last_read, posts, int indexPosts) async{
+    Database db = await database.db;
+
+    await db.insert(
+      "bookmark",
+      {
+        "Undang-Undang": "${posts!}",
+        "via" : "Pemilihan, Keputusan BAWASLU",
+        "page_index": indexPosts,
+        "last_read": last_read == true ? 1 : 0,
+      },
+    );
+    Get.back();
+    Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText:Colors.white);
+
+    var data = await db.query("bookmark");
+    print(data);
+  }
+
+  // void addbookmark(bool last_read, Post post, int indexPosts) async {
+  //   Database db = await database.db;
+
+  //   await db.insert(
+  //     "bookmark",
+  //     {
+  //       "title": post.title,
+  //       "page_index": indexPosts,
+  //       // Pastikan Anda menyesuaikan properti yang diperlukan sesuai dengan skema tabel bookmark Anda
+  //     },
+  //   );
+  //   Get.back();
+  //   Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText: Colors.white);
+
+  //   var data = await db.query("bookmark");
+  //   print(data);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +86,20 @@ class PDFViewerFromUrl extends StatelessWidget {
                     title: Text("SIMPAN"),
                     actions: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addbookmark(true, posts![index],
+                              index!); // Meneruskan objek Post tunggal
+                        },
                         child: Text("TERAKHIR DIBACA"),
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFFbc9d61),
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addbookmark(false, posts![index],
+                              index!); // Meneruskan objek Post tunggal
+                        },
                         child: Text("BOOKMARK"),
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFFbc9d61),
@@ -61,6 +111,7 @@ class PDFViewerFromUrl extends StatelessWidget {
               );
             },
           ),
+
           // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
         ],
       ),
@@ -88,7 +139,7 @@ class PDFView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfPdfViewer.network(
-        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        "http://10.214.91.66:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
         controller: _pdfViewerController,
         key: _pdfViewerStateKey,
       ),
@@ -184,7 +235,7 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
                         MaterialPageRoute(
                             builder: (context) => PDFViewerFromUrl(
                                 url:
-                                    'http://172.20.10.6:8000/storage/${posts![index].data_file}')),
+                                    'http://10.214.91.66:8000/storage/${posts![index].data_file}')),
                       );
                     },
                     style: ElevatedButton.styleFrom(

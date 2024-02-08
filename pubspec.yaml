@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   sqflite:
+  get: ^4.6.1
+  floor:
   syncfusion_flutter_pdfviewer: ^21.2.4
   # flutter_webview_plugin: ^0.3.11
   flutter_pdfview: ^1.2.7

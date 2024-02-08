@@ -15,11 +15,10 @@ class home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
-        backgroundColor:Color(0xFFbc9d61),
+        backgroundColor: Color(0xFFbc9d61),
         // centerTitle: true,
-        // title: const 
+        // title: const
         // Text(
         //   '',
         //   style: TextStyle(
@@ -36,8 +35,9 @@ class home extends StatelessWidget {
         // ),
 
         iconTheme: IconThemeData(
-          color: Colors.black,),// Ubah warna ikon menu menjadi hitam
-        
+          color: Colors.black,
+        ), // Ubah warna ikon menu menjadi hitam
+
         // bottom: PreferredSize(
         //     child: Container(
         //       padding: const EdgeInsets.only(left: 30, right: 20, bottom: 5),
@@ -49,29 +49,30 @@ class home extends StatelessWidget {
         //       width: 300,
         //     ),
         //     preferredSize: const Size.fromHeight(110)),
-       
       ),
       drawer: Drawer(
-        backgroundColor:Color.fromARGB(255, 255, 255, 255),
-        child: ListView(
-        children: [
-          
-          DrawerHeader(
-            margin: EdgeInsets.zero,
-            padding: EdgeInsets.zero,
-            decoration: BoxDecoration(
-              color:Color.fromARGB(255, 255, 255, 255), // Warna latar belakang DrawerHeader
-            ),
-            child: UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color:Color.fromARGB(255, 255, 255, 255) // Ubah warna latar belakang menjadi putih
-              ),
-              accountName: SizedBox.shrink(), // Menghapus accountName
-              accountEmail: SizedBox.shrink(), // Menghapus accountEmail
-              currentAccountPicture: Stack(
-                alignment: Alignment.bottomLeft, // Atur letak gambar di sini
-                children: [
-                  CircleAvatar(
+          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(
+                      255, 255, 255, 255), // Warna latar belakang DrawerHeader
+                ),
+                child: UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 255, 255,
+                          255) // Ubah warna latar belakang menjadi putih
+                      ),
+                  accountName: SizedBox.shrink(), // Menghapus accountName
+                  accountEmail: SizedBox.shrink(), // Menghapus accountEmail
+                  currentAccountPicture: Stack(
+                    alignment:
+                        Alignment.bottomLeft, // Atur letak gambar di sini
+                    children: [
+                      CircleAvatar(
                         radius: 300,
                         backgroundImage: AssetImage('images/robot.jpg'),
                       ),
@@ -80,49 +81,48 @@ class home extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-
-            ListTile(
-              leading:
-              Icon(Icons.person, color: Color.fromARGB(255, 0, 0, 0),), 
-              title: Text(
-                "Tentang Saya",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0)
-                ),), 
-              onTap: () {
-               Navigator.push(context, 
-               MaterialPageRoute(builder: (context) => MyProfile(),
-               )
-               ); 
-              },
-            ),
-            ListTile(
-              leading:
-              Icon(Icons.home, color: Color.fromARGB(255, 0, 0, 0),), 
-              title: 
-              Text(
-                "Tentang Aplikasi",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0)
-                ),), 
-              onTap: () {
-               Navigator.push(context, 
-               MaterialPageRoute(builder: (context) => ttg_apk(),
-               )
-               ); 
-              },
-            ),
-          
-          
-        ],
-      )
-      ),
+              ListTile(
+                leading: Icon(
+                  Icons.person,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                title: Text(
+                  "Tentang Saya",
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyProfile(),
+                      ));
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.home,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                title: Text(
+                  "Tentang Aplikasi",
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ttg_apk(),
+                      ));
+                },
+              ),
+            ],
+          )),
       body: Container(
         color: Color.fromRGBO(255, 255, 255, 1),
         child: Column(
@@ -502,7 +502,8 @@ class home extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => bookmark(),
+                              builder: (context) => BookmarkScreen
+                                  .instance, // <-- Panggilan yang benar
                             ),
                           );
                         },
@@ -537,8 +538,6 @@ class home extends StatelessWidget {
           ],
         ),
       ),
-
-     
     );
   }
 }
