@@ -17,24 +17,25 @@ class PDFViewerFromUrl extends StatelessWidget {
 
   List<Post>? posts;
 
-  BookmarkScreen database = BookmarkScreen.instance; // Menyesuaikan pemanggilan dengan metode getter instance
+  BookmarkScreen database = BookmarkScreen
+      .instance; // Menyesuaikan pemanggilan dengan metode getter instance
 
   get index => null;
 
-  void addbookmark(bool last_read, posts, int indexPosts) async{
+  void addbookmark(bool last_read, posts, int indexPosts) async {
     Database db = await database.db;
 
     await db.insert(
       "bookmark",
       {
         "Undang-Undang": "${posts!}",
-        "via" : "Pemilihan, Keputusan BAWASLU",
+        "via": "Pemilihan, Keputusan BAWASLU",
         "page_index": indexPosts,
         "last_read": last_read == true ? 1 : 0,
       },
     );
     Get.back();
-    Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText:Colors.white);
+    Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText: Colors.white);
 
     var data = await db.query("bookmark");
     print(data);
@@ -139,7 +140,7 @@ class PDFView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfPdfViewer.network(
-        "http://10.214.91.66:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
         controller: _pdfViewerController,
         key: _pdfViewerStateKey,
       ),
@@ -152,7 +153,9 @@ class PDFView extends StatelessWidget {
 
 class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
   List<Post>? posts;
+  List<Post>? searchResult; // Menyimpan hasil pencarian
   var isLoaded = false;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -167,8 +170,26 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
     if (posts != null) {
       setState(() {
         isLoaded = true;
+        searchResult =
+            posts; // Setel hasil pencarian awal sama dengan semua postingan
       });
     }
+  }
+
+  void _search(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        searchResult = posts; // Jika query kosong, tampilkan semua postingan
+      });
+      return;
+    }
+    // Lakukan pencarian berdasarkan judul
+    setState(() {
+      searchResult = posts
+          ?.where(
+              (post) => post.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -181,7 +202,16 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
                 fontWeight: FontWeight.bold,
                 fontSize: 25)),
         centerTitle: true,
-        backgroundColor: Color(0xFFbc9d61), // warna AppBar
+        backgroundColor: Color(0xFFbc9d61),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: PostSearch(posts!));
+            },
+          ),
+        ],
+        // warna AppBar
       ),
       body: Visibility(
         visible: isLoaded,
@@ -235,7 +265,7 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
                         MaterialPageRoute(
                             builder: (context) => PDFViewerFromUrl(
                                 url:
-                                    'http://10.214.91.66:8000/storage/${posts![index].data_file}')),
+                                    'http://172.20.10.6:8000/storage/${posts![index].data_file}')),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -264,6 +294,105 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
           },
         ),
       ),
+    );
+  }
+}
+
+class PostSearch extends SearchDelegate<Post> {
+  final List<Post> posts;
+
+  PostSearch(this.posts);
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // Actions for AppBar
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = ''; // Clear the search query
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // Leading icon on the left of the AppBar
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        // Cek apakah posts tidak null dan memiliki setidaknya satu item
+        if (posts != null && posts.isNotEmpty) {
+          // Mengambil URL file PDF dari item pertama di daftar posts
+          String pdfUrl =
+              'http://172.20.10.6:8000/storage/${posts[0].data_file}';
+          // Beralih ke halaman PDFViewerFromUrl dengan URL file PDF sebagai argumen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PDFViewerFromUrl(url: pdfUrl),
+            ),
+          );
+        } else {
+          // Menampilkan pesan kesalahan jika daftar posts kosong
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Tidak ada file PDF yang ditemukan.'),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // Show the search results based on the query
+    final searchResults = posts
+        .where((post) => post.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    return ListView.builder(
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(searchResults[index].title),
+          onTap: () {
+            // Handle the tap on the search result
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PDFViewerFromUrl(
+                    url:
+                        'http://172.20.10.6:8000/storage/${searchResults[index].data_file}'),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // Show suggestions as the user types in the search field
+    final suggestionList = query.isEmpty
+        ? []
+        : posts
+            .where((post) =>
+                post.title.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+    return ListView.builder(
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestionList[index].title),
+          onTap: () {
+            query =
+                suggestionList[index].title; // Set query to selected suggestion
+          },
+        );
+      },
     );
   }
 }

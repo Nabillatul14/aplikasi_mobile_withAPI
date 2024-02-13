@@ -5,6 +5,8 @@ import 'package:flutter_api_bawaslu/views/pdfviewpemilihanKeputusan.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanuud.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilukeputusan.dart';
+import 'package:flutter_api_bawaslu/views/searchpemilihankeputusan.dart';
+import 'package:flutter_api_bawaslu/views/searchpemilihanperbawaslu.dart';
 
 class pemilihan extends StatelessWidget {
   const pemilihan ({super.key});
@@ -80,7 +82,8 @@ class pemilihan extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PdfViewPemilihanPerbawaslu()),
+                        // MaterialPageRoute(builder: (context) => PdfViewPemilihanPerbawaslu()),
+                        MaterialPageRoute(builder: (context) => HomeScreenperbawaslu()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -111,7 +114,8 @@ class pemilihan extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PdfViewPemilihanKeputusan()),
+                        // MaterialPageRoute(builder: (context) => PdfViewPemilihanKeputusan()),
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

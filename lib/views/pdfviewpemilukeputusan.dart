@@ -90,7 +90,7 @@ class PDFView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfPdfViewer.network(
-        "http://10.214.91.66:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
         controller: _pdfViewerController,
         key: _pdfViewerStateKey,
       ),
@@ -211,7 +211,7 @@ class _PdfViewState extends State<PdfViewPemiluKeputusan> {
                         //  FlutterWebviewPlugin().launch(url);
                         Navigator.push(context, 
                         MaterialPageRoute(builder: (context) => PDFViewerFromUrl(
-                      url: 'http://10.214.91.66:8000/storage/${posts![index].data_file}'
+                      url: 'http://172.20.10.6:8000/storage/${posts![index].data_file}'
                     )),
                       );
                       },

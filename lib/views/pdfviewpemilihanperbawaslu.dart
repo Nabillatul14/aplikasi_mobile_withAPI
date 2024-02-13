@@ -50,7 +50,9 @@ class PDFViewerFromUrl extends StatelessWidget {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+
+                        },
                         child: Text("BOOKMARK"),
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFFbc9d61),
@@ -82,14 +84,14 @@ class PdfViewPemilihanPerbawaslu extends StatefulWidget {
 }
 
 class PDFView extends StatelessWidget {
-   late PdfViewerController _pdfViewerController;
+  late PdfViewerController _pdfViewerController;
   final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfPdfViewer.network(
-        "http://10.214.91.66:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
         controller: _pdfViewerController,
         key: _pdfViewerStateKey,
       ),
@@ -204,6 +206,8 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                   //       ],
                   //     ),
                   // ),
+                  
+
                   ElevatedButton(
                     onPressed: () {
                       //   var url =
@@ -214,7 +218,7 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                         MaterialPageRoute(
                             builder: (context) => PDFViewerFromUrl(
                                 url:
-                                    'http://10.214.91.66:8000/storage/${posts![index].data_file}')),
+                                    'http://172.20.10.6:8000/storage/${posts![index].data_file}')),
                       );
                     },
                     style: ElevatedButton.styleFrom(
