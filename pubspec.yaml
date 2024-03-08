@@ -49,6 +49,7 @@ dependencies:
   url_launcher: ^6.1.11
   url_launcher_windows: ^3.0.3
   syncfusion_flutter_pdfviewer: ^19.3.59-beta
+  provider: ^6.0.3
 
 
 dev_dependencies:

@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
-import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
+import 'package:flutter_api_bawaslu/views/pdfviewpemilihanuud.dart';
 import 'package:http/http.dart' as http;
 
-class pemilihanperbawaslu extends StatefulWidget {
-  const pemilihanperbawaslu({super.key});
+class pemiluuud extends StatefulWidget {
+  const pemiluuud({super.key});
 
   @override
-  State<pemilihanperbawaslu> createState() => _pemilihanperbawasluState();
+  State<pemiluuud> createState() => _pemiluuudState();
 }
 
-class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
+class _pemiluuudState extends State<pemiluuud> {
   // list get data api
   List<Post> posts = [];
 
@@ -32,7 +32,7 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('File PERBAWASLU',
+        title: const Text('File Undang-Undang Pemilu',
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -141,8 +141,8 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
   }
 
   void fetchPost() async {
-    final response = await http
-        .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanPerbawaslu'));
+    final response =
+        await http.get(Uri.parse('http://172.20.10.6:8000/api/pemiluUUD'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;

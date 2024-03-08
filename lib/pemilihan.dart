@@ -1,12 +1,12 @@
 // import 'package:flutter_api_bawaslu/pemilu/perbawaslu.dart';
 // import 'package:flutter_api_bawaslu/pemilu/uupemilu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_bawaslu/views/pdfviewpemilihanKeputusan.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanuud.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilukeputusan.dart';
 import 'package:flutter_api_bawaslu/views/searchpemilihankeputusan.dart';
 import 'package:flutter_api_bawaslu/views/searchpemilihanperbawaslu.dart';
+import 'package:flutter_api_bawaslu/views/searchpemilihanuud.dart';
 
 class pemilihan extends StatelessWidget {
   const pemilihan ({super.key});
@@ -51,7 +51,7 @@ class pemilihan extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PdfViewPemilihanUUD()),
+                      MaterialPageRoute(builder: (context) => pemilihanuud()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -83,7 +83,7 @@ class pemilihan extends StatelessWidget {
                       Navigator.push(
                         context,
                         // MaterialPageRoute(builder: (context) => PdfViewPemilihanPerbawaslu()),
-                        MaterialPageRoute(builder: (context) => HomeScreenperbawaslu()),
+                        MaterialPageRoute(builder: (context) => pemilihanperbawaslu()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -115,7 +115,7 @@ class pemilihan extends StatelessWidget {
                       Navigator.push(
                         context,
                         // MaterialPageRoute(builder: (context) => PdfViewPemilihanKeputusan()),
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(builder: (context) => pemilihankeputusan()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
 import 'package:http/http.dart' as http;
 
-class pemilihanperbawaslu extends StatefulWidget {
-  const pemilihanperbawaslu({super.key});
+class pemiluperbawaslu extends StatefulWidget {
+  const pemiluperbawaslu({super.key});
 
   @override
-  State<pemilihanperbawaslu> createState() => _pemilihanperbawasluState();
+  State<pemiluperbawaslu> createState() => _pemiluperbawasluState();
 }
 
-class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
+class _pemiluperbawasluState extends State<pemiluperbawaslu> {
   // list get data api
   List<Post> posts = [];
 
@@ -142,7 +142,7 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
 
   void fetchPost() async {
     final response = await http
-        .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanPerbawaslu'));
+        .get(Uri.parse('http://172.20.10.6:8000/api/pemiluPerbawaslu'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;

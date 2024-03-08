@@ -32,38 +32,38 @@ class PDFViewerFromUrl extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.bookmark),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("SIMPAN"),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text("TERAKHIR DIBACA"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text("BOOKMARK"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-          // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.bookmark),
+        //     onPressed: () {
+        //       showDialog(
+        //         context: context,
+        //         builder: (context) {
+        //           return AlertDialog(
+        //             title: Text("SIMPAN"),
+        //             actions: [
+        //               ElevatedButton(
+        //                 onPressed: () {},
+        //                 child: Text("TERAKHIR DIBACA"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //               ElevatedButton(
+        //                 onPressed: () {},
+        //                 child: Text("BOOKMARK"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        //   // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
+        // ],
       ),
       body: const PDF().fromUrl(
         url,
@@ -221,10 +221,6 @@ class _PdfViewState extends State<PdfViewPemilihanUUD> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Icon(
-                          //   Icons.picture_as_pdf, // Tambahkan ikon PDF
-                          //   color: Colors.white,
-                          // ),
                           SizedBox(width: 8), // Tambahkan jarak antara ikon dan teks
                           Text(
                             'Buka PDF',

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilukeputusan.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemiluperbawaslu.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemiluuud.dart';
+import 'package:flutter_api_bawaslu/views/searchpemiluuud.dart';
+import 'package:flutter_api_bawaslu/views/searchpemilukeputusan.dart';
+import 'package:flutter_api_bawaslu/views/searchpemiluperbawaslu.dart';
 
 class pemilu extends StatelessWidget {
   const pemilu ({super.key});
@@ -49,7 +52,7 @@ class pemilu extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const PdfViewPemiluUUD()),
+                      MaterialPageRoute(builder: (context) => const pemiluuud()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -80,7 +83,7 @@ class pemilu extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PdfViewPemiluPerbawaslu()),
+                        MaterialPageRoute(builder: (context) => pemiluperbawaslu()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -111,7 +114,7 @@ class pemilu extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PdfViewPemiluKeputusan()),
+                        MaterialPageRoute(builder: (context) => pemilukeputusan()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

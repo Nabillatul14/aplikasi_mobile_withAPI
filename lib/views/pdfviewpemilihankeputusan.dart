@@ -11,35 +11,36 @@ import 'package:url_launcher/url_launcher.dart';
 // import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
+
 class PDFViewerFromUrl extends StatelessWidget {
   final String url;
   PDFViewerFromUrl({Key? key, required this.url}) : super(key: key);
 
   List<Post>? posts;
 
-  BookmarkScreen database = BookmarkScreen
-      .instance; // Menyesuaikan pemanggilan dengan metode getter instance
+  // BookmarkScreen database = BookmarkScreen
+  //     .instance; // Menyesuaikan pemanggilan dengan metode getter instance
 
-  get index => null;
+  // get index => null;
 
-  void addbookmark(bool last_read, posts, int indexPosts) async {
-    Database db = await database.db;
+  // void addbookmark(bool last_read, posts, int indexPosts) async {
+  //   Database db = await database.db;
 
-    await db.insert(
-      "bookmark",
-      {
-        "Undang-Undang": "${posts!}",
-        "via": "Pemilihan, Keputusan BAWASLU",
-        "page_index": indexPosts,
-        "last_read": last_read == true ? 1 : 0,
-      },
-    );
-    Get.back();
-    Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText: Colors.white);
+  //   await db.insert(
+  //     "bookmark",
+  //     {
+  //       "Undang-Undang": "${posts!}",
+  //       "via": "Pemilihan, Keputusan BAWASLU",
+  //       "page_index": indexPosts,
+  //       "last_read": last_read == true ? 1 : 0,
+  //     },
+  //   );
+  //   Get.back();
+  //   Get.snackbar("Berhasil", "PDF Berhasil Disimpan!", colorText: Colors.white);
 
-    var data = await db.query("bookmark");
-    print(data);
-  }
+  //   var data = await db.query("bookmark");
+  //   print(data);
+  // }
 
   // void addbookmark(bool last_read, Post post, int indexPosts) async {
   //   Database db = await database.db;
@@ -76,45 +77,45 @@ class PDFViewerFromUrl extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.bookmark),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("SIMPAN"),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {
-                          addbookmark(true, posts![index],
-                              index!); // Meneruskan objek Post tunggal
-                        },
-                        child: Text("TERAKHIR DIBACA"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          addbookmark(false, posts![index],
-                              index!); // Meneruskan objek Post tunggal
-                        },
-                        child: Text("BOOKMARK"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.bookmark),
+        //     onPressed: () {
+        //       showDialog(
+        //         context: context,
+        //         builder: (context) {
+        //           return AlertDialog(
+        //             title: Text("SIMPAN"),
+        //             actions: [
+        //               ElevatedButton(
+        //                 onPressed: () {
+        //                   addbookmark(true, posts![index],
+        //                       index!); // Meneruskan objek Post tunggal
+        //                 },
+        //                 child: Text("TERAKHIR DIBACA"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //               ElevatedButton(
+        //                 onPressed: () {
+        //                   addbookmark(false, posts![index],
+        //                       index!); // Meneruskan objek Post tunggal
+        //                 },
+        //                 child: Text("BOOKMARK"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
 
-          // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
-        ],
+        //   // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
+        // ],
       ),
       body: const PDF().fromUrl(
         url,

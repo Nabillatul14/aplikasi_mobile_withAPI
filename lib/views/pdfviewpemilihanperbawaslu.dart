@@ -32,40 +32,40 @@ class PDFViewerFromUrl extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.bookmark),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("SIMPAN"),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text("TERAKHIR DIBACA"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.bookmark),
+        //     onPressed: () {
+        //       showDialog(
+        //         context: context,
+        //         builder: (context) {
+        //           return AlertDialog(
+        //             title: Text("SIMPAN"),
+        //             actions: [
+        //               ElevatedButton(
+        //                 onPressed: () {},
+        //                 child: Text("TERAKHIR DIBACA"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //               ElevatedButton(
+        //                 onPressed: () {
 
-                        },
-                        child: Text("BOOKMARK"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xFFbc9d61),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-          // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
-        ],
+        //                 },
+        //                 child: Text("BOOKMARK"),
+        //                 style: ElevatedButton.styleFrom(
+        //                   primary: Color(0xFFbc9d61),
+        //                 ),
+        //               ),
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        //   // Icon atau widget lainnya untuk ditambahkan di sebelah kanan
+        // ],
       ),
       body: const PDF().fromUrl(
         url,
@@ -177,42 +177,9 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                       ],
                     ),
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //   //   var url =
-                  //   //       'http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf';
-                  //   //  FlutterWebviewPlugin().launch(url);
-                  //     Navigator.push(context,
-                  //       MaterialPageRoute(builder: (context) => const PDFViewerFromUrl(
-                  //     url: 'http://192.168.1.8:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf'
-                  //   )),
-                  //     );
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //       primary: Color(0xFFbc9d61), // Ubah warna latar belakang tombol
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: [
-                  //         Icon(
-                  //           Icons.picture_as_pdf, // Tambahkan ikon PDF
-                  //           color: Colors.white,
-                  //         ),
-                  //         SizedBox(width: 8), // Tambahkan jarak antara ikon dan teks
-                  //         Text(
-                  //           'Buka PDF',
-                  //           style: TextStyle(color: Colors.white),
-                  //         ),
-                  //       ],
-                  //     ),
-                  // ),
-                  
-
+                 
                   ElevatedButton(
                     onPressed: () {
-                      //   var url =
-                      //       'http://10.210.77.170:8000/storage/data-file/c58wW0QirNGs5WVPns9ZLqqfpPgzMZ8c8kyyQaZM.pdf';
-                      //  FlutterWebviewPlugin().launch(url);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -228,10 +195,6 @@ class _PdfViewState extends State<PdfViewPemilihanPerbawaslu> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Icon(
-                        //   Icons.picture_as_pdf, // Tambahkan ikon PDF
-                        //   color: Colors.white,
-                        // ),
                         SizedBox(
                             width: 8), // Tambahkan jarak antara ikon dan teks
                         Text(

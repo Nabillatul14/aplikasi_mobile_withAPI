@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
-import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
+import 'package:flutter_api_bawaslu/views/pdfviewpemilihanuud.dart';
 import 'package:http/http.dart' as http;
 
-class pemilihanperbawaslu extends StatefulWidget {
-  const pemilihanperbawaslu({super.key});
+class pemilihanuud extends StatefulWidget {
+  const pemilihanuud({super.key});
 
   @override
-  State<pemilihanperbawaslu> createState() => _pemilihanperbawasluState();
+  State<pemilihanuud> createState() => _pemilihanuudState();
 }
 
-class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
+class _pemilihanuudState extends State<pemilihanuud> {
   // list get data api
   List<Post> posts = [];
 
@@ -32,7 +32,7 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('File PERBAWASLU',
+        title: const Text('File Undang-Undang Pemilihan',
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -125,7 +125,7 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
                                           url:
                                               'http://172.20.10.6:8000/storage/${displayItem![index].data_file}')),
                                 );
-                                print("test");
+                                // print("test");
                               },
                               child: ListTile(
                                 title: Text(displayItem[index].title),
@@ -141,8 +141,8 @@ class _pemilihanperbawasluState extends State<pemilihanperbawaslu> {
   }
 
   void fetchPost() async {
-    final response = await http
-        .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanPerbawaslu'));
+    final response =
+        await http.get(Uri.parse('http://172.20.10.6:8000/api/pemilihanUUD'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;
