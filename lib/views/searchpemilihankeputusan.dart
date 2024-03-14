@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_api_bawaslu/provider/simpan.dart';
 import 'package:flutter_api_bawaslu/simpan_bookmark.dart';
 import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 
 class pemilihankeputusan extends StatefulWidget {
   const pemilihankeputusan({super.key});
@@ -15,6 +16,57 @@ class pemilihankeputusan extends StatefulWidget {
 }
 
 class _pemilihankeputusanState extends State<pemilihankeputusan> {
+  final _myBox = Hive.box('Favourite');
+
+  // void writeData(int value) {
+  //   // List<int> exist = _myBox.get('bookmark');
+  //   List<int> exist = List.from(_myBox.get('bookmark') ?? []);
+  //   _myBox.put('bookmark', exist.add(value));
+  //   print(_myBox.get('bookmark'));
+  // }
+
+  // void writeData(value) {
+  //   List exist = List.from(_myBox.get('bookmark') ?? []);
+  //   exist.add(value);
+  //   _myBox.put('bookmark', exist);
+  //   print(_myBox.get('bookmark'));
+  // }
+
+  // void writeData(int value) {
+  //   List<int> exist = List.from(_myBox.get('bookmark') ?? []);
+  //   exist.add(value);
+  //   _myBox.put('bookmark', exist); // Pastikan exist adalah List, bukan int
+  //   print(_myBox.get('bookmark'));
+  // }
+
+  // void writeData(int value) {
+  //   var bookmarkData = _myBox.get('bookmark');
+  //   List<int> exist = <int>[]; // Inisialisasi list dengan tipe int
+  //   if (bookmarkData != null) {
+  //     if (bookmarkData is List<dynamic>) {
+  //       exist = bookmarkData
+  //           .cast<int>()
+  //           .toList(); // Konversi List<dynamic> menjadi List<int>
+  //     } else if (bookmarkData is List<int>) {
+  //       exist = bookmarkData; // Gunakan langsung jika sudah bertipe List<int>
+  //     }
+  //   }
+  //   exist.add(value);
+  //   _myBox.put('bookmark', exist);
+  //   print(_myBox.get('bookmark'));
+  // }
+
+  void addToBookmark(int id) {
+    var bookmarkData = _myBox.get('bookmark') ?? [];
+    if (!bookmarkData.contains(id)) {
+      bookmarkData.add(id);
+      _myBox.put('bookmark', bookmarkData);
+      print('Item berhasil ditambahkan ke bookmark');
+    } else {
+      print('Item sudah ada di dalam bookmark');
+    }
+  }
+
   // list get data api
   List<Post> posts = [];
 
@@ -84,7 +136,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
                                               'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
                                 );
                               },
-                               child: ListTile(
+                              child: ListTile(
                                 title: Text(displayItem[index].title),
                                 leading: Container(
                                   height: 50,
@@ -99,13 +151,45 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
                                     size: 28,
                                   ),
                                 ),
+                                // trailing: IconButton(
+                                //   icon: Icon(
+                                //     Icons.favorite_border,
+                                //     color: Colors.red,
+                                //   ),
+                                //   onPressed: () {
+                                //     print(displayItem[index].id);
+                                //     // List exist = List.from(_myBox.get('bookmark') ?? []);
+                                //     // var exist = _myBox.get('bookmark') ?? [];
+                                //     var exist = _myBox.get('bookmark') as List<int>? ?? [];
+                                //     exist.add(displayItem[index].id);
+                                //     _myBox.put('bookmark', exist); // Pastikan exist adalah List, bukan int
+                                //     print(_myBox.get('bookmark'));
+                                //   },
+                                // ),
+
+                                // trailing: IconButton(
+                                //   icon: Icon(
+                                //     Icons.favorite_border,
+                                //     color: Colors.red,
+                                //   ),
+                                //   onPressed: () {
+                                //     print(displayItem[index].id);
+                                //     var exist =
+                                //         _myBox.get('bookmark') as List<int>? ??
+                                //             [];
+                                //     exist.add(displayItem[index].id);
+                                //     _myBox.put('bookmark',
+                                //         exist); // Pastikan exist adalah List<int>, bukan List<dynamic>
+                                //     print(_myBox.get('bookmark'));
+                                //   },
+                                // ),
                                 trailing: IconButton(
                                   icon: Icon(
                                     Icons.favorite_border,
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
-                                    // Lakukan tindakan yang sesuai ketika ikon favorit ditekan
+                                    addToBookmark(displayItem[index].id);
                                   },
                                 ),
                               ));
@@ -171,5 +255,4 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
     });
   }
 }
-
 

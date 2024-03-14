@@ -502,8 +502,7 @@ class home extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BookmarkScreen
-                                  .instance, // <-- Panggilan yang benar
+                              builder: (context) => BookmarkScreen(), // <-- Panggilan yang benar
                             ),
                           );
                         },
