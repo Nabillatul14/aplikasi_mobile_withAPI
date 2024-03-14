@@ -79,7 +79,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://172.20.10.6:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
                                 );
                               },
                                child: ListTile(
@@ -123,7 +123,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://172.20.10.6:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
                                 );
                                 print("test");
                               },
@@ -142,7 +142,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
 
   void fetchPost() async {
     final response = await http
-        .get(Uri.parse('http://172.20.10.6:8000/api/pemiluPerbawaslu'));
+        .get(Uri.parse('http://192.168.68.115:8000/api/pemiluPerbawaslu'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;

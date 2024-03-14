@@ -141,7 +141,7 @@ class PDFView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfPdfViewer.network(
-        "http://172.20.10.6:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
+        "http://192.168.68.115:8000/storage/public/data-file/0hImf7dbam7QIS2QcE6pmny04pfaFy55wLFZngT5.pdf",
         controller: _pdfViewerController,
         key: _pdfViewerStateKey,
       ),
@@ -266,7 +266,7 @@ class _PdfViewState extends State<PdfViewPemilihanKeputusan> {
                         MaterialPageRoute(
                             builder: (context) => PDFViewerFromUrl(
                                 url:
-                                    'http://172.20.10.6:8000/storage/${posts![index].data_file}')),
+                                    'http://192.168.68.115:8000/storage/${posts![index].data_file}')),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -327,7 +327,7 @@ class PostSearch extends SearchDelegate<Post> {
         if (posts != null && posts.isNotEmpty) {
           // Mengambil URL file PDF dari item pertama di daftar posts
           String pdfUrl =
-              'http://172.20.10.6:8000/storage/${posts[0].data_file}';
+              'http://192.168.68.115:8000/storage/${posts[0].data_file}';
           // Beralih ke halaman PDFViewerFromUrl dengan URL file PDF sebagai argumen
           Navigator.push(
             context,
@@ -365,7 +365,7 @@ class PostSearch extends SearchDelegate<Post> {
               MaterialPageRoute(
                 builder: (context) => PDFViewerFromUrl(
                     url:
-                        'http://172.20.10.6:8000/storage/${searchResults[index].data_file}'),
+                        'http://192.168.68.115:8000/storage/${searchResults[index].data_file}'),
               ),
             );
           },
