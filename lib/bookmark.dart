@@ -363,7 +363,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                               },
                               child: ListTile(
@@ -414,7 +414,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                                 print("test");
                               },
@@ -434,7 +434,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void fetchPost() async {
     var bookmarkData = _myBox.get('bookmark') ?? []; // Ambil data bookmark
     final response =
-        await http.get(Uri.parse('http://192.168.68.115:8000/api/dashboard'));
+        await http.get(Uri.parse('http://192.168.0.191:8000/api/dashboard'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;

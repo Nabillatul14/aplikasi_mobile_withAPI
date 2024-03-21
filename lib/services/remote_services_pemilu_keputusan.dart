@@ -5,7 +5,7 @@ class RemoteServicePemiluKeputusan{
   Future<List<Post>?> getPosts() async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://192.168.68.115:8000/api/pemiluKeputusan');
+    var uri = Uri.parse('http://192.168.0.191:8000/api/pemiluKeputusan');
     var response = await client.get(uri);
     if (response.statusCode == 200) {
       var json = response.body;

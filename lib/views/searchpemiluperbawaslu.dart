@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihanperbawaslu.dart';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
 
 class pemiluperbawaslu extends StatefulWidget {
   const pemiluperbawaslu({super.key});
@@ -13,6 +14,19 @@ class pemiluperbawaslu extends StatefulWidget {
 }
 
 class _pemiluperbawasluState extends State<pemiluperbawaslu> {
+  final _myBox = Hive.box('Favourite');
+
+  void addToBookmark(int id) {
+    var bookmarkData = _myBox.get('bookmark') ?? [];
+    if (!bookmarkData.contains(id)) {
+      bookmarkData.add(id);
+      _myBox.put('bookmark', bookmarkData);
+      print('Item berhasil ditambahkan ke bookmark');
+    } else {
+      print('Item sudah ada di dalam bookmark');
+    }
+  }
+
   // list get data api
   List<Post> posts = [];
 
@@ -79,7 +93,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                               },
                                child: ListTile(
@@ -98,12 +112,16 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
                                   ),
                                 ),
                                 trailing: IconButton(
-                                  icon: Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.red,
-                                  ),
+                                  icon: _myBox.get('bookmark') != null &&
+                                          _myBox
+                                              .get('bookmark')
+                                              .contains(displayItem[index].id)
+                                      ? Icon(Icons.favorite, color: Colors.red)
+                                      : Icon(Icons.favorite_border),
                                   onPressed: () {
-                                    // Lakukan tindakan yang sesuai ketika ikon favorit ditekan
+                                    setState(() {
+                                      addToBookmark(displayItem[index].id);
+                                    });
                                   },
                                 ),
                               ));
@@ -123,7 +141,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                                 print("test");
                               },
@@ -142,7 +160,7 @@ class _pemiluperbawasluState extends State<pemiluperbawaslu> {
 
   void fetchPost() async {
     final response = await http
-        .get(Uri.parse('http://192.168.68.115:8000/api/pemiluPerbawaslu'));
+        .get(Uri.parse('http://192.168.0.191:8000/api/pemiluPerbawaslu'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;

@@ -3,9 +3,9 @@ import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_api_bawaslu/provider/simpan.dart';
-import 'package:flutter_api_bawaslu/simpan_bookmark.dart';
-import 'package:provider/provider.dart';
+// import 'package:flutter_api_bawaslu/provider/simpan.dart';
+// import 'package:flutter_api_bawaslu/simpan_bookmark.dart';
+// import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
 
 class pemilihankeputusan extends StatefulWidget {
@@ -133,7 +133,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                               },
                               child: ListTile(
@@ -184,12 +184,16 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
                                 //   },
                                 // ),
                                 trailing: IconButton(
-                                  icon: Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.red,
-                                  ),
+                                  icon: _myBox.get('bookmark') != null &&
+                                          _myBox
+                                              .get('bookmark')
+                                              .contains(displayItem[index].id)
+                                      ? Icon(Icons.favorite, color: Colors.red)
+                                      : Icon(Icons.favorite_border),
                                   onPressed: () {
-                                    addToBookmark(displayItem[index].id);
+                                    setState(() {
+                                      addToBookmark(displayItem[index].id);
+                                    });
                                   },
                                 ),
                               ));
@@ -209,7 +213,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
                                   MaterialPageRoute(
                                       builder: (context) => PDFViewerFromUrl(
                                           url:
-                                              'http://192.168.68.115:8000/storage/${displayItem![index].data_file}')),
+                                              'http://192.168.0.191:8000/storage/${displayItem![index].data_file}')),
                                 );
                                 print("test");
                               },
@@ -228,7 +232,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
 
   void fetchPost() async {
     final response = await http
-        .get(Uri.parse('http://192.168.68.115:8000/api/pemilihanKeputusan'));
+        .get(Uri.parse('http://192.168.0.191:8000/api/pemilihanKeputusan'));
     final body = response.body;
     final json = jsonDecode(body);
     final result = json as List<dynamic>;
@@ -255,4 +259,3 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
     });
   }
 }
-
