@@ -967,236 +967,6 @@
 
 // higlight search term new modified
 
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_api_bawaslu/models/post.dart';
-import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
-import 'package:http/http.dart' as http;
-import 'package:hive/hive.dart';
-import 'package:pdftron_flutter/pdftron_flutter.dart'; // Import library PdftronFlutter.dart
-
-class pemilihankeputusan extends StatefulWidget {
-  const pemilihankeputusan({Key? key}) : super(key: key);
-
-  @override
-  State<pemilihankeputusan> createState() => _pemilihankeputusanState();
-}
-
-class _pemilihankeputusanState extends State<pemilihankeputusan> {
-  late Box _myBox;
-  List<Post> posts = [];
-  TextEditingController searchDatauser = TextEditingController();
-  List<Post> displayItem = [];
-
-  @override
-  void initState() {
-    super.initState();
-    openHiveBoxes();
-    fetchPost();
-  }
-
-  void openHiveBoxes() async {
-    await Hive.openBox('Favourite');
-    _myBox = Hive.box('Favourite');
-  }
-
-  void addToBookmark(int? id) {
-    if (id != null) {
-      var bookmarkData = _myBox.get('bookmark') ?? [];
-      if (!bookmarkData.contains(id)) {
-        bookmarkData.add(id);
-        _myBox.put('bookmark', bookmarkData);
-        print('Item berhasil ditambahkan ke bookmark');
-      } else {
-        print('Item sudah ada di dalam bookmark');
-      }
-    }
-  }
-
-  void fetchPost() async {
-    final response = await http
-        .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
-    final body = response.body;
-    final json = jsonDecode(body);
-    final result = json as List<dynamic>;
-    final transform = result.map((e) {
-      return Post(
-        data_file: e['data_file'],
-        firebase_url: e['firebase_url'],
-        id: e['id'],
-        title: e['title'],
-        description: e['description'],
-      );
-    }).toList();
-    setState(() {
-      posts = transform;
-      displayItem = List.from(posts);
-    });
-  }
-
-  void _onSearch(String searchText) {
-    searchData(searchText);
-  }
-
-  void searchData(String data) {
-    setState(() {
-      if (data.isEmpty) {
-        displayItem = List.from(posts);
-      } else {
-        displayItem = posts.where((post) {
-          return post.title.toLowerCase().contains(data.toLowerCase()) ||
-              post.description.toLowerCase().contains(data.toLowerCase());
-        }).toList();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'File Keputusan BAWASLU',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Color(0xFFbc9d61),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: ListView(
-        children: [
-          Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.all(20.0),
-            child: TextField(
-              controller: searchDatauser,
-              onChanged: ((value) => _onSearch(value)),
-              decoration: InputDecoration(
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                hintText: 'Cari undang-undang / pasal di sini',
-                prefixIcon: const Icon(Icons.search),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            child: buildListView(displayItem),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildListView(List<Post> displayItem) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: displayItem.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Viewer(
-                    url: displayItem[index].firebase_url,
-                    searchTerm: searchDatauser.text,
-                  ),
-                ),
-              );
-            },
-            child: ListTile(
-              title:
-                  _highlightText(displayItem[index].title, searchDatauser.text),
-              subtitle: _highlightText(
-                  displayItem[index].description, searchDatauser.text),
-              leading: Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey[300],
-                ),
-                child: Icon(
-                  Icons.picture_as_pdf,
-                  color: Colors.red,
-                  size: 28,
-                ),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: _myBox.get('bookmark') != null &&
-                            _myBox
-                                .get('bookmark')
-                                .contains(displayItem[index].id)
-                        ? Icon(Icons.favorite, color: Colors.red)
-                        : Icon(Icons.favorite_border),
-                    onPressed: () {
-                      setState(() {
-                        addToBookmark(displayItem[index].id);
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _highlightText(String text, String searchTerm) {
-    if (searchTerm.isEmpty) {
-      return Text(text);
-    }
-
-    List<TextSpan> spans = [];
-    int start = 0;
-    int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
-
-    while (index != -1) {
-      if (index > start) {
-        spans.add(TextSpan(text: text.substring(start, index)));
-      }
-
-      spans.add(TextSpan(
-          text: text.substring(index, index + searchTerm.length),
-          style: TextStyle(backgroundColor: Colors.yellow)));
-
-      start = index + searchTerm.length;
-      index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
-    }
-
-    if (start < text.length) {
-      spans.add(TextSpan(text: text.substring(start)));
-    }
-
-    return RichText(
-        text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
-  }
-}
-
-
-
-
-
-
 // import 'dart:convert';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_api_bawaslu/models/post.dart';
@@ -1316,7 +1086,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
 //                 border: OutlineInputBorder(
 //                   borderRadius: BorderRadius.circular(20.0),
 //                 ),
-//                 hintText: 'Cari undang-undang / pasal di sini',
+//                 hintText: 'Cari undang-undang di sini',
 //                 prefixIcon: const Icon(Icons.search),
 //               ),
 //             ),
@@ -1422,5 +1192,1067 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
 //   }
 // }
 
+// terakhir dilihat bisa, tampilan search sudah, highlight sudah
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_api_bawaslu/models/post.dart';
+// import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:hive/hive.dart';
+// import 'package:hive_flutter/hive_flutter.dart'; // Import Hive Flutter untuk inisialisasi Hive
+// import 'package:pdftron_flutter/pdftron_flutter.dart'; // Import library PdftronFlutter.dart
 
+// class pemilihankeputusan extends StatefulWidget {
+//   const pemilihankeputusan({Key? key}) : super(key: key);
 
+//   @override
+//   State<pemilihankeputusan> createState() => _pemilihankeputusanState();
+// }
+
+// class _pemilihankeputusanState extends State<pemilihankeputusan> {
+//   late Box _myBox;
+//   List<Post> posts = [];
+//   TextEditingController searchDatauser = TextEditingController();
+//   List<Post> displayItem = [];
+//   int lastSeenIndex = -1; // Menyimpan indeks item terakhir yang dilihat
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initHive();
+//   }
+
+//   void _initHive() async {
+//     await Hive.initFlutter(); // Inisialisasi Hive Flutter
+//     await openHiveBoxes();
+//     fetchPost();
+//     loadLastSeenIndex();
+//   }
+
+//   Future<void> openHiveBoxes() async {
+//     await Hive.openBox('Favourite');
+//     _myBox = Hive.box('Favourite');
+//   }
+
+//   void addToBookmark(int? id) {
+//     if (id != null) {
+//       var bookmarkData = _myBox.get('bookmark') ?? [];
+//       if (!bookmarkData.contains(id)) {
+//         bookmarkData.add(id);
+//         _myBox.put('bookmark', bookmarkData);
+//         print('Item berhasil ditambahkan ke bookmark');
+//       } else {
+//         print('Item sudah ada di dalam bookmark');
+//       }
+//     }
+//   }
+
+//   Future<void> fetchPost() async {
+//     final response = await http
+//         .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
+//     if (response.statusCode == 200) {
+//       final body = response.body;
+//       final json = jsonDecode(body);
+//       final result = json as List<dynamic>;
+//       final transform = result.map((e) {
+//         return Post(
+//           data_file: e['data_file'],
+//           firebase_url: e['firebase_url'],
+//           id: e['id'],
+//           title: e['title'],
+//           description: e['description'],
+//         );
+//       }).toList();
+//       setState(() {
+//         posts = transform;
+//         displayItem = List.from(posts);
+//       });
+//     } else {
+//       print('Failed to load posts');
+//     }
+//   }
+
+//   void _onSearch(String searchText) {
+//     searchData(searchText);
+//   }
+
+//   void searchData(String data) {
+//     setState(() {
+//       if (data.isEmpty) {
+//         displayItem = List.from(posts);
+//       } else {
+//         displayItem = posts.where((post) {
+//           return post.title.toLowerCase().contains(data.toLowerCase()) ||
+//               post.description.toLowerCase().contains(data.toLowerCase());
+//         }).toList();
+//       }
+//     });
+//   }
+
+//   void loadLastSeenIndex() {
+//     int? savedIndex = _myBox.get('lastSeenIndex');
+//     if (savedIndex != null) {
+//       setState(() {
+//         lastSeenIndex = savedIndex;
+//       });
+//     }
+//   }
+
+//   void saveLastSeenIndex(int index) {
+//     _myBox.put('lastSeenIndex', index);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'File Keputusan BAWASLU',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontWeight: FontWeight.bold,
+//             fontSize: 20,
+//           ),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Color(0xFFbc9d61),
+//         leading: IconButton(
+//           icon: Icon(Icons.arrow_back, color: Colors.black),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ),
+//       body: ListView(
+//         children: [
+//           Container(
+//             height: 100,
+//             width: MediaQuery.of(context).size.width,
+//             margin: const EdgeInsets.all(20.0),
+//             child: TextField(
+//               controller: searchDatauser,
+//               onChanged: ((value) => _onSearch(value)),
+//               decoration: InputDecoration(
+//                 filled: true,
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(20.0),
+//                 ),
+//                 hintText: 'Cari undang-undang di sini',
+//                 prefixIcon: const Icon(Icons.search),
+//               ),
+//             ),
+//           ),
+//           Container(
+//             padding: const EdgeInsets.all(20.0),
+//             child: buildListView(displayItem),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget buildListView(List<Post> displayItem) {
+//     return SizedBox(
+//       height: MediaQuery.of(context).size.height,
+//       child: ListView.builder(
+//         itemCount: displayItem.length,
+//         itemBuilder: (context, index) {
+//           final bool isLastSeen = index == lastSeenIndex; // Menandai apakah item adalah item terakhir yang dilihat
+//           return InkWell(
+//             onTap: () {
+//               setState(() {
+//                 lastSeenIndex = index; // Perbarui indeks item terakhir yang dilihat
+//                 saveLastSeenIndex(index); // Simpan indeks item terakhir yang dilihat ke Hive
+//               });
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => Viewer(
+//                     url: displayItem[index].firebase_url,
+//                     searchTerm: searchDatauser.text,
+//                   ),
+//                 ),
+//               );
+//             },
+//             child: ListTile(
+//               title: _highlightText(displayItem[index].title, searchDatauser.text),
+//               subtitle: _highlightText(displayItem[index].description, searchDatauser.text),
+//               leading: Container(
+//                 height: 50,
+//                 width: 50,
+//                 decoration: BoxDecoration(
+//                   borderRadius: BorderRadius.circular(12),
+//                   color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300], // Mengubah warna item jika merupakan item terakhir yang dilihat
+//                 ),
+//                 child: Icon(
+//                   Icons.picture_as_pdf,
+//                   color: isLastSeen ? Colors.white : Colors.red,
+//                   size: 28,
+//                 ),
+//               ),
+//               trailing: Row(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   IconButton(
+//                     icon: _myBox.get('bookmark') != null &&
+//                         _myBox.get('bookmark').contains(displayItem[index].id)
+//                         ? Icon(Icons.favorite, color: Colors.red)
+//                         : Icon(Icons.favorite_border),
+//                     onPressed: () {
+//                       setState(() {
+//                         addToBookmark(displayItem[index].id);
+//                       });
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+
+//   Widget _highlightText(String text, String searchTerm) {
+//     if (searchTerm.isEmpty) {
+//       return Text(text);
+//     }
+
+//     List<TextSpan> spans = [];
+//     int start = 0;
+//     int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+//     while (index != -1) {
+//       if (index > start) {
+//         spans.add(TextSpan(text: text.substring(start, index)));
+//       }
+
+//       spans.add(TextSpan(
+//           text: text.substring(index, index + searchTerm.length),
+//           style: TextStyle(backgroundColor: Colors.amber[400])));
+
+//       start = index + searchTerm.length;
+//       index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+//     }
+
+//     if (start < text.length) {
+//       spans.add(TextSpan(text: text.substring(start)));
+//     }
+
+//     return RichText(
+//         text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
+//   }
+// }
+
+// terakhir dilihat bisa, tampilan search sudah, highlight sudah, saat serching deskripsi muncul
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_api_bawaslu/models/post.dart';
+// import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:hive/hive.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+// class pemilihankeputusan extends StatefulWidget {
+//   const pemilihankeputusan({Key? key}) : super(key: key);
+
+//   @override
+//   State<pemilihankeputusan> createState() => _pemilihankeputusanState();
+// }
+
+// class _pemilihankeputusanState extends State<pemilihankeputusan> {
+//   late Box _myBox;
+//   List<Post> posts = [];
+//   TextEditingController searchDatauser = TextEditingController();
+//   List<Post> displayItem = [];
+//   int lastSeenIndex = -1;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initHive();
+//   }
+
+//   void _initHive() async {
+//     await Hive.initFlutter();
+//     await openHiveBoxes();
+//     fetchPost();
+//     loadLastSeenIndex();
+//   }
+
+//   Future<void> openHiveBoxes() async {
+//     await Hive.openBox('Favourite');
+//     _myBox = Hive.box('Favourite');
+//   }
+
+//   void addToBookmark(int? id) {
+//     if (id != null) {
+//       var bookmarkData = _myBox.get('bookmark') ?? [];
+//       if (!bookmarkData.contains(id)) {
+//         bookmarkData.add(id);
+//         _myBox.put('bookmark', bookmarkData);
+//         print('Item berhasil ditambahkan ke bookmark');
+//       } else {
+//         print('Item sudah ada di dalam bookmark');
+//       }
+//     }
+//   }
+
+//   Future<void> fetchPost() async {
+//     final response = await http
+//         .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
+//     if (response.statusCode == 200) {
+//       final body = response.body;
+//       final json = jsonDecode(body);
+//       final result = json as List<dynamic>;
+//       final transform = result.map((e) {
+//         return Post(
+//           data_file: e['data_file'],
+//           firebase_url: e['firebase_url'],
+//           id: e['id'],
+//           title: e['title'],
+//           description: e['description'],
+//           input_pasal: e['input_pasal']
+//         );
+//       }).toList();
+//       setState(() {
+//         posts = transform;
+//         displayItem = List.from(posts);
+//       });
+//     } else {
+//       print('Failed to load posts');
+//     }
+//   }
+
+//   void _onSearch(String searchText) {
+//     searchData(searchText);
+//   }
+
+//   void searchData(String data) {
+//     setState(() {
+//       if (data.isEmpty) {
+//         displayItem = List.from(posts);
+//       } else {
+//         displayItem = posts.where((post) {
+//           return post.title.toLowerCase().contains(data.toLowerCase()) ||
+//               post.description.toLowerCase().contains(data.toLowerCase()) || post.input_pasal.toLowerCase().contains(data.toLowerCase());
+//         }).toList();
+//       }
+//     });
+//   }
+
+//   void loadLastSeenIndex() {
+//     int? savedIndex = _myBox.get('lastSeenIndex');
+//     if (savedIndex != null) {
+//       setState(() {
+//         lastSeenIndex = savedIndex;
+//       });
+//     }
+//   }
+
+//   void saveLastSeenIndex(int index) {
+//     _myBox.put('lastSeenIndex', index);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'File Keputusan BAWASLU',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontWeight: FontWeight.bold,
+//             fontSize: 20,
+//           ),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Color(0xFFbc9d61),
+//         leading: IconButton(
+//           icon: Icon(Icons.arrow_back, color: Colors.black),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ),
+//       body: ListView(
+//         children: [
+//           Container(
+//             height: 100,
+//             width: MediaQuery.of(context).size.width,
+//             margin: const EdgeInsets.all(20.0),
+//             child: TextField(
+//               controller: searchDatauser,
+//               onChanged: ((value) => _onSearch(value)),
+//               decoration: InputDecoration(
+//                 filled: true,
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(20.0),
+//                 ),
+//                 hintText: 'Cari undang-undang di sini',
+//                 prefixIcon: const Icon(Icons.search),
+//               ),
+//             ),
+//           ),
+//           Container(
+//             padding: const EdgeInsets.all(20.0),
+//             child: buildListView(displayItem),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget buildListView(List<Post> displayItem) {
+//   return SizedBox(
+//     height: MediaQuery.of(context).size.height,
+//     child: ListView.builder(
+//       itemCount: displayItem.length,
+//       itemBuilder: (context, index) {
+//         final bool isLastSeen = index == lastSeenIndex;
+//         return InkWell(
+//           onTap: () {
+//             setState(() {
+//               lastSeenIndex = index;
+//               saveLastSeenIndex(index);
+//             });
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => Viewer(
+//                   url: displayItem[index].firebase_url,
+//                   searchTerm: searchDatauser.text,
+//                 ),
+//               ),
+//             );
+//           },
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               ListTile(
+//                 title: _highlightText(
+//                   displayItem[index].title,
+//                   searchDatauser.text,
+//                   searchMode: searchDatauser.text.isNotEmpty,
+//                 ),
+//                 leading: Container(
+//                   height: 50,
+//                   width: 50,
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(12),
+//                     color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300],
+//                   ),
+//                   child: Icon(
+//                     Icons.picture_as_pdf,
+//                     color: isLastSeen ? Colors.white : Colors.red,
+//                     size: 28,
+//                   ),
+//                 ),
+//                 trailing: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     IconButton(
+//                       icon: _myBox.get('bookmark') != null &&
+//                               _myBox.get('bookmark').contains(displayItem[index].id)
+//                           ? Icon(Icons.favorite, color: Colors.red)
+//                           : Icon(Icons.favorite_border),
+//                       onPressed: () {
+//                         setState(() {
+//                           addToBookmark(displayItem[index].id);
+//                         });
+//                       },
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               if (searchDatauser.text.isNotEmpty) // Hanya tampilkan deskripsi saat dalam mode pencarian
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//                   child: _highlightText(
+//                     displayItem[index].description,
+//                     searchDatauser.text,
+//                     searchMode: true,
+//                   ),
+//                 ),
+//             ],
+//           ),
+//         );
+//       },
+//     ),
+//   );
+// }
+
+//   Widget _highlightText(String text, String searchTerm,
+//       {bool searchMode = false}) {
+//     if (!searchMode || searchTerm.isEmpty) {
+//       return Text(text);
+//     }
+
+//     List<TextSpan> spans = [];
+//     int start = 0;
+//     int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+//     while (index != -1) {
+//       if (index > start) {
+//         spans.add(TextSpan(text: text.substring(start, index)));
+//       }
+
+//       spans.add(TextSpan(
+//           text: text.substring(index, index + searchTerm.length),
+//           style: TextStyle(backgroundColor: Colors.amber[400])));
+
+//       start = index + searchTerm.length;
+//       index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+//     }
+
+//     if (start < text.length) {
+//       spans.add(TextSpan(text: text.substring(start)));
+//     }
+
+//     return RichText(
+//         text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
+//   }
+// }
+
+// new by bens
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_api_bawaslu/models/post.dart';
+// import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:hive/hive.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+// class pemilihankeputusan extends StatefulWidget {
+//   const pemilihankeputusan({Key? key}) : super(key: key);
+
+//   @override
+//   State<pemilihankeputusan> createState() => _pemilihankeputusanState();
+// }
+
+// class _pemilihankeputusanState extends State<pemilihankeputusan> {
+//   late Box _myBox;
+//   List<Post> posts = [];
+//   TextEditingController searchDatauser = TextEditingController();
+//   List<Post> displayItem = [];
+//   int lastSeenIndex = -1;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initHive();
+//   }
+
+//   void _initHive() async {
+//     await Hive.initFlutter();
+//     await openHiveBoxes();
+//     fetchPost();
+//     loadLastSeenIndex();
+//   }
+
+//   Future<void> openHiveBoxes() async {
+//     await Hive.openBox('Favourite');
+//     _myBox = Hive.box('Favourite');
+//   }
+
+//   void addToBookmark(int? id) {
+//     if (id != null) {
+//       var bookmarkData = _myBox.get('bookmark') ?? [];
+//       if (!bookmarkData.contains(id)) {
+//         bookmarkData.add(id);
+//         _myBox.put('bookmark', bookmarkData);
+//         print('Item berhasil ditambahkan ke bookmark');
+//       } else {
+//         print('Item sudah ada di dalam bookmark');
+//       }
+//     }
+//   }
+
+//   Future<void> fetchPost() async {
+//     final response = await http
+//         .get(Uri.parse('http://192.168.43.198:8000/api/pemilihanKeputusan'));
+//     if (response.statusCode == 200) {
+//       final body = response.body;
+//       final json = jsonDecode(body);
+//       final result = json as List<dynamic>;
+//       final transform = result.map((e) {
+//         return Post(
+//           data_file: e['data_file'],
+//           firebase_url: e['firebase_url'],
+//           id: e['id'],
+//           title: e['title'],
+//           description: e['description'],
+//         );
+//       }).toList();
+//       setState(() {
+//         posts = transform;
+//         displayItem = List.from(posts);
+//       });
+//     } else {
+//       print('Failed to load posts');
+//     }
+//   }
+
+//   void _onSearch(String searchText) {
+//     searchData(searchText);
+//   }
+
+//   void searchData(String data) {
+//     setState(() {
+//       if (data.isEmpty) {
+//         displayItem = List.from(posts);
+//       } else {
+//         displayItem = posts.where((post) {
+//           return post.title.toLowerCase().contains(data.toLowerCase()) ||
+//               post.description.toLowerCase().contains(data.toLowerCase());
+//         }).toList();
+//       }
+//     });
+//   }
+
+//   void loadLastSeenIndex() {
+//     int? savedIndex = _myBox.get('lastSeenIndex');
+//     if (savedIndex != null) {
+//       setState(() {
+//         lastSeenIndex = savedIndex;
+//       });
+//     }
+//   }
+
+//   void saveLastSeenIndex(int index) {
+//     _myBox.put('lastSeenIndex', index);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'File Keputusan BAWASLU',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontWeight: FontWeight.bold,
+//             fontSize: 20,
+//           ),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Color(0xFFbc9d61),
+//         leading: IconButton(
+//           icon: Icon(Icons.arrow_back, color: Colors.black),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ),
+//       body: ListView(
+//         children: [
+//           Container(
+//             height: 100,
+//             width: MediaQuery.of(context).size.width,
+//             margin: const EdgeInsets.all(20.0),
+//             child: TextField(
+//               controller: searchDatauser,
+//               onChanged: ((value) => _onSearch(value)),
+//               decoration: InputDecoration(
+//                 filled: true,
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(20.0),
+//                 ),
+//                 hintText: 'Cari undang-undang di sini',
+//                 prefixIcon: const Icon(Icons.search),
+//               ),
+//             ),
+//           ),
+//           Container(
+//             padding: const EdgeInsets.all(20.0),
+//             child: buildListView(displayItem),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget buildListView(List<Post> displayItem) {
+//   return SizedBox(
+//     height: MediaQuery.of(context).size.height,
+//     child: ListView.builder(
+//       itemCount: displayItem.length,
+//       itemBuilder: (context, index) {
+//         final bool isLastSeen = index == lastSeenIndex;
+//         return InkWell(
+//           onTap: () {
+//             setState(() {
+//               lastSeenIndex = index;
+//               saveLastSeenIndex(index);
+//             });
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => Viewer(
+//                   url: displayItem[index].firebase_url,
+//                   searchTerm: searchDatauser.text,
+//                 ),
+//               ),
+//             );
+//           },
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               ListTile(
+//                 title: _highlightText(
+//                   displayItem[index].title,
+//                   searchDatauser.text,
+//                   searchMode: searchDatauser.text.isNotEmpty,
+//                 ),
+//                 leading: Container(
+//                   height: 50,
+//                   width: 50,
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(12),
+//                     color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300],
+//                   ),
+//                   child: Icon(
+//                     Icons.picture_as_pdf,
+//                     color: isLastSeen ? Colors.white : Colors.red,
+//                     size: 28,
+//                   ),
+//                 ),
+//                 trailing: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     IconButton(
+//                       icon: _myBox.get('bookmark') != null &&
+//                               _myBox.get('bookmark').contains(displayItem[index].id)
+//                           ? Icon(Icons.favorite, color: Colors.red)
+//                           : Icon(Icons.favorite_border),
+//                       onPressed: () {
+//                         setState(() {
+//                           addToBookmark(displayItem[index].id);
+//                         });
+//                       },
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               if (searchDatauser.text.isNotEmpty) // Hanya tampilkan deskripsi saat dalam mode pencarian
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//                   child: _highlightText(
+//                     displayItem[index].description,
+//                     searchDatauser.text,
+//                     searchMode: true,
+//                   ),
+//                 ),
+//             ],
+//           ),
+//         );
+//       },
+//     ),
+//   );
+// }
+
+//   Widget _highlightText(String text, String searchTerm,
+//       {bool searchMode = false}) {
+//     if (!searchMode || searchTerm.isEmpty) {
+//       return Text(text);
+//     }
+
+//     List<TextSpan> spans = [];
+//     int start = 0;
+//     int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+//     while (index != -1) {
+//       if (index > start) {
+//         spans.add(TextSpan(text: text.substring(start, index)));
+//       }
+
+//       spans.add(TextSpan(
+//           text: text.substring(index, index + searchTerm.length),
+//           style: TextStyle(backgroundColor: Colors.amber[400])));
+
+//       start = index + searchTerm.length;
+//       index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+//     }
+
+//     if (start < text.length) {
+//       spans.add(TextSpan(text: text.substring(start)));
+//     }
+
+//     return RichText(
+//         text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
+//   }
+// }
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_api_bawaslu/models/post.dart';
+import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
+import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+class pemilihankeputusan extends StatefulWidget {
+  const pemilihankeputusan({Key? key}) : super(key: key);
+
+  @override
+  State<pemilihankeputusan> createState() => _pemilihankeputusanState();
+}
+
+class _pemilihankeputusanState extends State<pemilihankeputusan> {
+  late Box _myBox;
+  List<Post> posts = [];
+  TextEditingController searchDatauser = TextEditingController();
+  List<Post> displayItem = [];
+  int lastSeenIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _initHive();
+  }
+
+  void _initHive() async {
+    await Hive.initFlutter();
+    await openHiveBoxes();
+    fetchPost();
+    loadLastSeenIndex();
+  }
+
+  Future<void> openHiveBoxes() async {
+    await Hive.openBox('Favourite');
+    _myBox = Hive.box('Favourite');
+  }
+
+  void addToBookmark(int? id) {
+    if (id != null) {
+      var bookmarkData = _myBox.get('bookmark') ?? [];
+      if (!bookmarkData.contains(id)) {
+        bookmarkData.add(id);
+        _myBox.put('bookmark', bookmarkData);
+        print('Item berhasil ditambahkan ke bookmark');
+      } else {
+        print('Item sudah ada di dalam bookmark');
+      }
+    }
+  }
+
+  Future<void> fetchPost() async {
+    final response = await http
+        .get(Uri.parse('http://192.168.43.198:8000/api/pemilihanKeputusan'));
+    if (response.statusCode == 200) {
+      final body = response.body;
+      final json = jsonDecode(body);
+      final result = json as List<dynamic>;
+      final transform = result.map((e) {
+        return Post(
+          data_file: e['data_file'],
+          firebase_url: e['firebase_url'],
+          id: e['id'],
+          title: e['title'],
+          description: e['description'],
+        );
+      }).toList();
+      setState(() {
+        posts = transform;
+        displayItem = List.from(posts);
+      });
+    } else {
+      print('Failed to load posts');
+    }
+  }
+
+  void _onSearch(String searchText) {
+    searchData(searchText);
+  }
+
+  void searchData(String data) {
+    setState(() {
+      if (data.isEmpty) {
+        displayItem = List.from(posts);
+      } else {
+        displayItem = posts.where((post) {
+          return post.title.toLowerCase().contains(data.toLowerCase()) ||
+              post.description.toLowerCase().contains(data.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
+  void loadLastSeenIndex() {
+    int? savedIndex = _myBox.get('lastSeenIndex');
+    if (savedIndex != null) {
+      setState(() {
+        lastSeenIndex = savedIndex;
+      });
+    }
+  }
+
+  void saveLastSeenIndex(int index) {
+    _myBox.put('lastSeenIndex', index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'File Keputusan BAWASLU',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Color(0xFFbc9d61),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: ListView(
+        children: [
+          Container(
+            height: 100,
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.all(20.0),
+            child: TextField(
+              controller: searchDatauser,
+              onChanged: ((value) => _onSearch(value)),
+              decoration: InputDecoration(
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                hintText: 'Cari undang-undang di sini',
+                prefixIcon: const Icon(Icons.search),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: buildListView(displayItem),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildListView(List<Post> displayItem) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+        itemCount: displayItem.length,
+        itemBuilder: (context, index) {
+          final bool isLastSeen = index == lastSeenIndex;
+          return InkWell(
+            onTap: () {
+              setState(() {
+                lastSeenIndex = index;
+                saveLastSeenIndex(index);
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Viewer(
+                    url: displayItem[index].firebase_url,
+                    searchTerm: searchDatauser.text,
+                  ),
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: _highlightText(
+                    displayItem[index].title,
+                    searchDatauser.text,
+                    searchMode: searchDatauser.text.isNotEmpty,
+                  ),
+                  leading: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300],
+                    ),
+                    child: Icon(
+                      Icons.picture_as_pdf,
+                      color: isLastSeen ? Colors.white : Colors.red,
+                      size: 28,
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: _myBox.get('bookmark') != null &&
+                                _myBox
+                                    .get('bookmark')
+                                    .contains(displayItem[index].id)
+                            ? Icon(Icons.favorite, color: Colors.red)
+                            : Icon(Icons.favorite_border),
+                        onPressed: () {
+                          setState(() {
+                            addToBookmark(displayItem[index].id);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                if (searchDatauser.text
+                    .isNotEmpty) // Hanya tampilkan deskripsi saat dalam mode pencarian
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _highlightText(
+                      displayItem[index].description,
+                      searchDatauser.text,
+                      searchMode: true,
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _highlightText(String text, String searchTerm,
+      {bool searchMode = false}) {
+    if (!searchMode || searchTerm.isEmpty) {
+      return Text(text);
+    }
+
+    List<TextSpan> spans = [];
+    int start = 0;
+    int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+    while (index != -1) {
+      if (index > start) {
+        spans.add(TextSpan(text: text.substring(start, index)));
+      }
+
+      spans.add(TextSpan(
+          text: text.substring(index, index + searchTerm.length),
+          style: TextStyle(backgroundColor: Colors.amber[400])));
+
+      start = index + searchTerm.length;
+      index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return RichText(
+        text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
+  }
+}
