@@ -1513,7 +1513,7 @@
 //           id: e['id'],
 //           title: e['title'],
 //           description: e['description'],
-//           input_pasal: e['input_pasal']
+
 //         );
 //       }).toList();
 //       setState(() {
@@ -1536,7 +1536,7 @@
 //       } else {
 //         displayItem = posts.where((post) {
 //           return post.title.toLowerCase().contains(data.toLowerCase()) ||
-//               post.description.toLowerCase().contains(data.toLowerCase()) || post.input_pasal.toLowerCase().contains(data.toLowerCase());
+//               post.description.toLowerCase().contains(data.toLowerCase());
 //         }).toList();
 //       }
 //     });
@@ -1772,7 +1772,7 @@
 
 //   Future<void> fetchPost() async {
 //     final response = await http
-//         .get(Uri.parse('http://192.168.43.198:8000/api/pemilihanKeputusan'));
+//         .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
 //     if (response.statusCode == 200) {
 //       final body = response.body;
 //       final json = jsonDecode(body);
@@ -1985,14 +1985,275 @@
 //   }
 // }
 
+// last modified by bens
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_api_bawaslu/models/post.dart';
+// import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
+// import 'package:http/http.dart' as http;
+
+// class pemilihankeputusan extends StatefulWidget {
+//   const pemilihankeputusan({Key? key}) : super(key: key);
+
+//   @override
+//   State<pemilihankeputusan> createState() => _pemilihankeputusanState();
+// }
+
+// class _pemilihankeputusanState extends State<pemilihankeputusan> {
+//   late List<Post> posts = [];
+//   late List<Post> displayItem = [];
+//   late TextEditingController searchDatauser;
+//   late int lastSeenIndex;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     searchDatauser = TextEditingController();
+//     lastSeenIndex = -1;
+//     fetchPost();
+//   }
+
+//   @override
+//   void dispose() {
+//     searchDatauser.dispose();
+//     super.dispose();
+//   }
+
+//   Future<void> fetchPost() async {
+//     final response = await http.get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
+//     if (response.statusCode == 200) {
+//       final body = response.body;
+//       final json = jsonDecode(body) as List<dynamic>;
+//       setState(() {
+//         posts = json.map((e) => Post(
+//           data_file: e['data_file'],
+//           firebase_url: e['firebase_url'],
+//           id: e['id'],
+//           title: e['title'],
+//           description: e['description'],
+
+//         )).toList();
+//         displayItem = List.from(posts);
+//       });
+//     } else {
+//       print('Failed to load posts');
+//     }
+//   }
+
+//   void _onSearch(String searchText) {
+//     searchData(searchText);
+//   }
+
+//   void searchData(String data) {
+//     setState(() {
+//       if (data.isEmpty) {
+//         displayItem = List.from(posts);
+//       } else {
+//         displayItem = posts.where((post) {
+//           return post.title.toLowerCase().contains(data.toLowerCase()) ||
+//               post.description.toLowerCase().contains(data.toLowerCase());
+//         }).toList();
+//       }
+//     });
+//   }
+
+//   void saveLastSeenIndex(int index) {
+//     setState(() {
+//       lastSeenIndex = index;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'File Keputusan BAWASLU',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontWeight: FontWeight.bold,
+//             fontSize: 20,
+//           ),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: Color(0xFFbc9d61),
+//         leading: IconButton(
+//           icon: Icon(Icons.arrow_back, color: Colors.black),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ),
+//       body: Column(
+//         children: [
+//           Container(
+//             height: 100,
+//             width: MediaQuery.of(context).size.width,
+//             margin: const EdgeInsets.all(20.0),
+//             child: TextField(
+//               controller: searchDatauser,
+//               onChanged: _onSearch,
+//               decoration: InputDecoration(
+//                 filled: true,
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(20.0),
+//                 ),
+//                 hintText: 'Cari undang-undang di sini',
+//                 prefixIcon: const Icon(Icons.search),
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: ListView.builder(
+//               itemCount: displayItem.length,
+//               itemBuilder: (context, index) {
+//                 final bool isLastSeen = index == lastSeenIndex;
+//                 final post = displayItem[index];
+//                 return InkWell(
+//                   onTap: () {
+//                     saveLastSeenIndex(index);
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => Viewer(
+//                           url: post.firebase_url,
+//                           searchTerm: searchDatauser.text,
+
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       ListTile(
+//                         title: _highlightText(
+//                           post.title,
+//                           searchDatauser.text,
+//                           searchMode: searchDatauser.text.isNotEmpty,
+//                         ),
+//                         leading: Container(
+//                           height: 50,
+//                           width: 50,
+//                           decoration: BoxDecoration(
+//                             borderRadius: BorderRadius.circular(12),
+//                             color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300],
+//                           ),
+//                           child: Icon(
+//                             Icons.picture_as_pdf,
+//                             color: isLastSeen ? Colors.white : Colors.red,
+//                             size: 28,
+//                           ),
+//                         ),
+//                         trailing: IconButton(
+//                           icon: Icon(Icons.favorite_border),
+//                           onPressed: () {
+//                             // Implement your logic for adding to bookmark
+//                           },
+//                         ),
+//                       ),
+//                       if (searchDatauser.text.isNotEmpty)
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//                           child: ListView(
+//                             shrinkWrap: true,
+//                             physics: NeverScrollableScrollPhysics(),
+//                             children: _extractHighlightedTexts(
+//                               post.description,
+//                               searchDatauser.text,
+//                             ).map((highlight) {
+//                               return Card(
+//                                 elevation: 2,
+//                                 margin: const EdgeInsets.symmetric(vertical: 8.0),
+//                                 child: InkWell(
+//                                   onTap: () {
+//                                     Navigator.push(
+//                                       context,
+//                                       MaterialPageRoute(
+//                                         builder: (context) => Viewer(
+//                                           url: post.firebase_url,
+//                                           searchTerm: searchDatauser.text,
+
+//                                         ),
+//                                       ),
+//                                     );
+//                                   },
+//                                   child: Padding(
+//                                     padding: const EdgeInsets.all(12.0),
+//                                     child: _highlightText(
+//                                       highlight,
+//                                       searchDatauser.text,
+//                                       searchMode: true,
+//                                     ),
+//                                   ),
+//                                 ),
+//                               );
+//                             }).toList(),
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   List<String> _extractHighlightedTexts(String description, String searchTerm) {
+//     final words = description.split(' ');
+//     final List<String> highlights = [];
+//     final searchTermLower = searchTerm.toLowerCase();
+
+//     for (int i = 0; i < words.length; i++) {
+//       if (words[i].toLowerCase().contains(searchTermLower)) {
+//         int start = (i - 5).clamp(0, words.length);
+//         int end = (i + 5).clamp(0, words.length);
+//         highlights.add(words.sublist(start, end).join(' '));
+//       }
+//     }
+//     return highlights;
+//   }
+
+//   Widget _highlightText(String text, String searchTerm, {bool searchMode = false}) {
+//     if (!searchMode || searchTerm.isEmpty) {
+//       return Text(text);
+//     }
+
+//     List<TextSpan> spans = [];
+//     int start = 0;
+//     int index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+//     while (index != -1) {
+//       if (index > start) {
+//         spans.add(TextSpan(text: text.substring(start, index)));
+//       }
+
+//       spans.add(TextSpan(
+//           text: text.substring(index, index + searchTerm.length),
+//           style: TextStyle(backgroundColor: Colors.amber[400])));
+
+//       start = index + searchTerm.length;
+//       index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+//     }
+
+//     if (start < text.length) {
+//       spans.add(TextSpan(text: text.substring(start)));
+//     }
+
+//     return RichText(
+//       text: TextSpan(style: TextStyle(color: Colors.black), children: spans),
+//     );
+//   }
+// }
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_api_bawaslu/models/post.dart';
 import 'package:flutter_api_bawaslu/views/pdfviewpemilihankeputusan.dart';
 import 'package:http/http.dart' as http;
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pdftron_flutter/pdftron_flutter.dart';
 
 class pemilihankeputusan extends StatefulWidget {
   const pemilihankeputusan({Key? key}) : super(key: key);
@@ -2002,61 +2263,33 @@ class pemilihankeputusan extends StatefulWidget {
 }
 
 class _pemilihankeputusanState extends State<pemilihankeputusan> {
-  late Box _myBox;
-  List<Post> posts = [];
-  TextEditingController searchDatauser = TextEditingController();
-  List<Post> displayItem = [];
-  int lastSeenIndex = -1;
+  late List<Post> posts = [];
+  late List<Post> displayItem = [];
+  late TextEditingController searchDatauser;
+  late int lastSeenIndex;
 
   @override
   void initState() {
     super.initState();
-    _initHive();
-  }
-
-  void _initHive() async {
-    await Hive.initFlutter();
-    await openHiveBoxes();
+    searchDatauser = TextEditingController();
+    lastSeenIndex = -1;
     fetchPost();
-    loadLastSeenIndex();
   }
 
-  Future<void> openHiveBoxes() async {
-    await Hive.openBox('Favourite');
-    _myBox = Hive.box('Favourite');
-  }
-
-  void addToBookmark(int? id) {
-    if (id != null) {
-      var bookmarkData = _myBox.get('bookmark') ?? [];
-      if (!bookmarkData.contains(id)) {
-        bookmarkData.add(id);
-        _myBox.put('bookmark', bookmarkData);
-        print('Item berhasil ditambahkan ke bookmark');
-      } else {
-        print('Item sudah ada di dalam bookmark');
-      }
-    }
+  @override
+  void dispose() {
+    searchDatauser.dispose();
+    super.dispose();
   }
 
   Future<void> fetchPost() async {
     final response = await http
-        .get(Uri.parse('http://192.168.43.198:8000/api/pemilihanKeputusan'));
+        .get(Uri.parse('http://172.20.10.6:8000/api/pemilihanKeputusan'));
     if (response.statusCode == 200) {
       final body = response.body;
-      final json = jsonDecode(body);
-      final result = json as List<dynamic>;
-      final transform = result.map((e) {
-        return Post(
-          data_file: e['data_file'],
-          firebase_url: e['firebase_url'],
-          id: e['id'],
-          title: e['title'],
-          description: e['description'],
-        );
-      }).toList();
+      final json = jsonDecode(body) as List<dynamic>;
       setState(() {
-        posts = transform;
+        posts = json.map((e) => Post.fromJson(e)).toList();
         displayItem = List.from(posts);
       });
     } else {
@@ -2074,24 +2307,23 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
         displayItem = List.from(posts);
       } else {
         displayItem = posts.where((post) {
+          final inputPasalMatches = post.inputPasal.any((pasal) {
+            return pasal.isi.toLowerCase().contains(data.toLowerCase()) ||
+                pasal.pasal.toLowerCase().contains(data.toLowerCase()) ||
+                pasal.halaman.toLowerCase().contains(data.toLowerCase());
+          });
           return post.title.toLowerCase().contains(data.toLowerCase()) ||
-              post.description.toLowerCase().contains(data.toLowerCase());
+              post.description.toLowerCase().contains(data.toLowerCase()) ||
+              inputPasalMatches;
         }).toList();
       }
     });
   }
 
-  void loadLastSeenIndex() {
-    int? savedIndex = _myBox.get('lastSeenIndex');
-    if (savedIndex != null) {
-      setState(() {
-        lastSeenIndex = savedIndex;
-      });
-    }
-  }
-
   void saveLastSeenIndex(int index) {
-    _myBox.put('lastSeenIndex', index);
+    setState(() {
+      lastSeenIndex = index;
+    });
   }
 
   @override
@@ -2115,7 +2347,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
           },
         ),
       ),
-      body: ListView(
+      body: Column(
         children: [
           Container(
             height: 100,
@@ -2123,7 +2355,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
             margin: const EdgeInsets.all(20.0),
             child: TextField(
               controller: searchDatauser,
-              onChanged: ((value) => _onSearch(value)),
+              onChanged: _onSearch,
               decoration: InputDecoration(
                 filled: true,
                 border: OutlineInputBorder(
@@ -2134,95 +2366,132 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            child: buildListView(displayItem),
-          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: displayItem.length,
+              itemBuilder: (context, index) {
+                final bool isLastSeen = index == lastSeenIndex;
+                final post = displayItem[index];
+                return InkWell(
+                  onTap: () {
+                    saveLastSeenIndex(index);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Viewer(
+                          url: post.firebase_url,
+                          searchTerm: searchDatauser.text,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        title: _highlightText(
+                          post.title,
+                          searchDatauser.text,
+                          searchMode: searchDatauser.text.isNotEmpty,
+                        ),
+                        leading: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: isLastSeen
+                                ? Color(0xFFbc9d61)
+                                : Colors.grey[300],
+                          ),
+                          child: Icon(
+                            Icons.picture_as_pdf,
+                            color: isLastSeen ? Colors.white : Colors.red,
+                            size: 28,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.favorite_border),
+                          onPressed: () {
+                            // Implement your logic for adding to bookmark
+                          },
+                        ),
+                      ),
+                      if (searchDatauser.text.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: post.inputPasal.where((pasal) {
+                              return pasal.isi.toLowerCase().contains(
+                                      searchDatauser.text.toLowerCase()) ||
+                                  pasal.pasal.toLowerCase().contains(
+                                      searchDatauser.text.toLowerCase()) ||
+                                  pasal.halaman.toLowerCase().contains(
+                                      searchDatauser.text.toLowerCase());
+                            }).map((pasal) {
+                              return Card(
+                                elevation: 2,
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Viewer(
+                                          url: post.firebase_url,
+                                          searchTerm: searchDatauser.text,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _highlightText(
+                                            pasal.pasal, searchDatauser.text,
+                                            searchMode: true),
+                                        _highlightText(
+                                            pasal.halaman, searchDatauser.text,
+                                            searchMode: true),
+                                        _highlightText(
+                                            pasal.isi, searchDatauser.text,
+                                            searchMode: true),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget buildListView(List<Post> displayItem) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: displayItem.length,
-        itemBuilder: (context, index) {
-          final bool isLastSeen = index == lastSeenIndex;
-          return InkWell(
-            onTap: () {
-              setState(() {
-                lastSeenIndex = index;
-                saveLastSeenIndex(index);
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Viewer(
-                    url: displayItem[index].firebase_url,
-                    searchTerm: searchDatauser.text,
-                  ),
-                ),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  title: _highlightText(
-                    displayItem[index].title,
-                    searchDatauser.text,
-                    searchMode: searchDatauser.text.isNotEmpty,
-                  ),
-                  leading: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: isLastSeen ? Color(0xFFbc9d61) : Colors.grey[300],
-                    ),
-                    child: Icon(
-                      Icons.picture_as_pdf,
-                      color: isLastSeen ? Colors.white : Colors.red,
-                      size: 28,
-                    ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: _myBox.get('bookmark') != null &&
-                                _myBox
-                                    .get('bookmark')
-                                    .contains(displayItem[index].id)
-                            ? Icon(Icons.favorite, color: Colors.red)
-                            : Icon(Icons.favorite_border),
-                        onPressed: () {
-                          setState(() {
-                            addToBookmark(displayItem[index].id);
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                if (searchDatauser.text
-                    .isNotEmpty) // Hanya tampilkan deskripsi saat dalam mode pencarian
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: _highlightText(
-                      displayItem[index].description,
-                      searchDatauser.text,
-                      searchMode: true,
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+  List<String> _extractHighlightedTexts(String description, String searchTerm) {
+    final words = description.split(' ');
+    final List<String> highlights = [];
+    final searchTermLower = searchTerm.toLowerCase();
+
+    for (int i = 0; i < words.length; i++) {
+      if (words[i].toLowerCase().contains(searchTermLower)) {
+        int start = (i - 5).clamp(0, words.length);
+        int end = (i + 5).clamp(0, words.length);
+        highlights.add(words.sublist(start, end).join(' '));
+      }
+    }
+    return highlights;
   }
 
   Widget _highlightText(String text, String searchTerm,
@@ -2253,6 +2522,7 @@ class _pemilihankeputusanState extends State<pemilihankeputusan> {
     }
 
     return RichText(
-        text: TextSpan(style: TextStyle(color: Colors.black), children: spans));
+      text: TextSpan(style: TextStyle(color: Colors.black), children: spans),
+    );
   }
 }

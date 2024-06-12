@@ -321,6 +321,95 @@
 // }
 
 // modified by bens
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+// class Viewer extends StatefulWidget {
+//   final String url;
+//   final String searchTerm;
+
+//   Viewer({required this.url, required this.searchTerm});
+
+//   _ViewerState createState() => _ViewerState();
+// }
+
+// class _ViewerState extends State<Viewer> {
+//   String _version = 'Unknown';
+//   String _document = '';
+//   bool _showViewer = true;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     initPlatformState();
+//     _document = widget.url;
+
+//     showViewer();
+//   }
+
+//   Future<void> initPlatformState() async {
+//     String version;
+//     try {
+//       PdftronFlutter.initialize("your_pdftron_license_key");
+//       version = await PdftronFlutter.version;
+//     } on PlatformException {
+//       version = 'Failed to get platform version.';
+//     }
+
+//     if (!mounted) return;
+
+//     setState(() {
+//       _version = version;
+//     });
+//   }
+
+//   void showViewer() async {
+//     var config = Config();
+
+//     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+//       print("document loaded: $filePath");
+//       print(widget.searchTerm);
+//       highlightSearchTerm(widget.searchTerm);
+//     });
+
+//     await PdftronFlutter.openDocument(_document, config: config);
+//     PdftronFlutter.openSearch();
+//     PdftronFlutter.startSearchMode(widget.searchTerm, false, false);
+//   }
+
+//   void highlightSearchTerm(String searchTerm) async {
+//     try {
+//       // Contoh penggunaan `importAnnotationCommand` untuk menyorot teks
+//       String command = '''
+//       <?xml version="1.0" encoding="UTF-8"?>
+//       <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+//         <add>
+//           <highlight page="1" rects="100,100,200,200" />
+//         </add>
+//         <search term="$searchTerm" />
+//       </xfdf>
+//     ''';
+
+//       await PdftronFlutter.importAnnotationCommand(command);
+//       print("Search and highlight term: $searchTerm");
+//     } on PlatformException catch (e) {
+//       print("Failed to search and highlight text: '${e.message}'.");
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         width: double.infinity,
+//         height: double.infinity,
+//         child: Container(),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
@@ -367,31 +456,19 @@ class _ViewerState extends State<Viewer> {
   void showViewer() async {
     var config = Config();
 
-    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+    startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
-      print(widget.searchTerm);
-      highlightSearchTerm(widget.searchTerm);
+      searchAndNavigateToTerm(widget.searchTerm);
     });
 
     await PdftronFlutter.openDocument(_document, config: config);
-    PdftronFlutter.openSearch();
-    PdftronFlutter.startSearchMode(widget.searchTerm, false, false);
   }
 
-  void highlightSearchTerm(String searchTerm) async {
+  void searchAndNavigateToTerm(String searchTerm) async {
     try {
-      // Contoh penggunaan `importAnnotationCommand` untuk menyorot teks
-      String command = '''
-      <?xml version="1.0" encoding="UTF-8"?>
-      <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
-        <add>
-          <highlight page="1" rects="100,100,200,200" />
-        </add>
-        <search term="$searchTerm" />
-      </xfdf>
-    ''';
-
-      await PdftronFlutter.importAnnotationCommand(command);
+      // Masukkan logika untuk mencari dan menyoroti kata
+      await PdftronFlutter.openSearch();
+      await PdftronFlutter.startSearchMode(searchTerm, false, false);
       print("Search and highlight term: $searchTerm");
     } on PlatformException catch (e) {
       print("Failed to search and highlight text: '${e.message}'.");
@@ -409,6 +486,98 @@ class _ViewerState extends State<Viewer> {
     );
   }
 }
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+// class Viewer extends StatefulWidget {
+//   final String url;
+//   final String searchTerm;
+
+//   Viewer({required this.url, required this.searchTerm});
+
+//   _ViewerState createState() => _ViewerState();
+// }
+
+// class _ViewerState extends State<Viewer> {
+//   String _version = 'Unknown';
+//   String _document = '';
+//   bool _showViewer = true;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     initPlatformState();
+//     _document = widget.url;
+
+//     showViewer();
+//   }
+
+//   Future<void> initPlatformState() async {
+//     String version;
+//     try {
+//       PdftronFlutter.initialize("your_pdftron_license_key");
+//       version = await PdftronFlutter.version;
+//     } on PlatformException {
+//       version = 'Failed to get platform version.';
+//     }
+
+//     if (!mounted) return;
+
+//     setState(() {
+//       _version = version;
+//     });
+//   }
+
+//   void showViewer() async {
+//     var config = Config();
+
+//     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+//       print("document loaded: $filePath");
+//       print(widget.searchTerm);
+//       highlightSearchTerm(widget.searchTerm);
+//     });
+
+//     await PdftronFlutter.openDocument(_document, config: config);
+//     PdftronFlutter.openSearch();
+//     PdftronFlutter.startSearchMode(widget.searchTerm, false, false);
+//   }
+
+//   void highlightSearchTerm(String searchTerm) async {
+//     try {
+//       // Contoh penggunaan `importAnnotationCommand` untuk menyorot teks
+//       String command = '''
+//       <?xml version="1.0" encoding="UTF-8"?>
+//       <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+//         <add>
+//           <highlight page="1" rects="100,100,200,200" />
+//         </add>
+//         <search term="$searchTerm" />
+//       </xfdf>
+//     ''';
+
+//       await PdftronFlutter.importAnnotationCommand(command);
+//       print("Search and highlight term: $searchTerm");
+//     } on PlatformException catch (e) {
+//       print("Failed to search and highlight text: '${e.message}'.");
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         width: double.infinity,
+//         height: double.infinity,
+//         child: Container(),
+//       ),
+//     );
+//   }
+// }
 
 
 
