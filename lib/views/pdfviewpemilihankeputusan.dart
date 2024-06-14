@@ -410,6 +410,84 @@
 //   }
 // }
 
+// baru banget dari gua bens
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:pdftron_flutter/pdftron_flutter.dart';
+
+// class Viewer extends StatefulWidget {
+//   final String url;
+//   final String searchTerm;
+
+//   Viewer({required this.url, required this.searchTerm});
+
+//   _ViewerState createState() => _ViewerState();
+// }
+
+// class _ViewerState extends State<Viewer> {
+//   String _version = 'Unknown';
+//   String _document = '';
+//   bool _showViewer = true;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     initPlatformState();
+//     _document = widget.url;
+
+//     showViewer();
+//   }
+
+//   Future<void> initPlatformState() async {
+//     String version;
+//     try {
+//       PdftronFlutter.initialize("your_pdftron_license_key");
+//       version = await PdftronFlutter.version;
+//     } on PlatformException {
+//       version = 'Failed to get platform version.';
+//     }
+
+//     if (!mounted) return;
+
+//     setState(() {
+//       _version = version;
+//     });
+//   }
+
+//   void showViewer() async {
+//     var config = Config();
+
+//     startDocumentLoadedListener((filePath) {
+//       print("document loaded: $filePath");
+//       searchAndNavigateToTerm(widget.searchTerm);
+//     });
+
+//     await PdftronFlutter.openDocument(_document, config: config);
+//   }
+
+//   void searchAndNavigateToTerm(String searchTerm) async {
+//     try {
+//       // Masukkan logika untuk mencari dan menyoroti kata
+//       await PdftronFlutter.openSearch();
+//       await PdftronFlutter.startSearchMode(searchTerm, false, false);
+//       print("Search and highlight term: $searchTerm");
+//     } on PlatformException catch (e) {
+//       print("Failed to search and highlight text: '${e.message}'.");
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         width: double.infinity,
+//         height: double.infinity,
+//         child: Container(),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
@@ -417,8 +495,9 @@ import 'package:pdftron_flutter/pdftron_flutter.dart';
 class Viewer extends StatefulWidget {
   final String url;
   final String searchTerm;
+  final int page;
 
-  Viewer({required this.url, required this.searchTerm});
+  Viewer({required this.url, required this.searchTerm, required this.page});
 
   _ViewerState createState() => _ViewerState();
 }
@@ -466,10 +545,14 @@ class _ViewerState extends State<Viewer> {
 
   void searchAndNavigateToTerm(String searchTerm) async {
     try {
-      // Masukkan logika untuk mencari dan menyoroti kata
+      // Menggunakan fitur PDFTron untuk mencari dan menyoroti teks
       await PdftronFlutter.openSearch();
       await PdftronFlutter.startSearchMode(searchTerm, false, false);
       print("Search and highlight term: $searchTerm");
+
+      // Mengarahkan langsung ke halaman yang relevan
+      PdftronFlutter.setCurrentPage(widget.page);
+      print("Navigated to page: ${widget.page}");
     } on PlatformException catch (e) {
       print("Failed to search and highlight text: '${e.message}'.");
     }
@@ -486,6 +569,9 @@ class _ViewerState extends State<Viewer> {
     );
   }
 }
+
+
+
 
 
 
